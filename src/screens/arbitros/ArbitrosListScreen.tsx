@@ -15,7 +15,7 @@ import { GetArbitroDTO } from "../../types";
 import { arbitroService } from "../../services/arbitroService";
 import { useAuth } from "../../context/AuthContext";
 import ArbitroModal from "../../components/modals/ArbitroModal";
-import { scaleFont } from "../../utils/responsive";
+import { scaleFont, isSmallDevice } from "../../utils/responsive";
 import tw from "../../theme/tailwind";
 
 type TabType = "activos" | "todos";
@@ -391,8 +391,8 @@ const styles = StyleSheet.create({
     paddingTop: scaleFont(44),
     backgroundColor: "#fff",
   },
-  title: { fontSize: scaleFont(20), fontWeight: "bold", color: "#0f172a" },
-  subtitle: { fontSize: scaleFont(12), color: "#64748b", marginTop: 2 },
+  title: { fontSize: scaleFont(20), fontWeight: "bold", color: "#0f172a", includeFontPadding: false },
+  subtitle: { fontSize: scaleFont(12), color: "#64748b", marginTop: 2, includeFontPadding: false },
   btnAdd: {
     backgroundColor: "#1a1a2e",
     paddingVertical: scaleFont(8),
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 2,
   },
-  btnAddText: { color: "#fff", fontSize: scaleFont(12), fontWeight: "700" },
+  btnAddText: { color: "#fff", fontSize: scaleFont(12), fontWeight: "700", includeFontPadding: false },
   tabsContainer: {
     flexDirection: "row",
     backgroundColor: "#fff",
@@ -423,7 +423,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#1a1a2e",
     borderColor: "#1a1a2e",
   },
-  tabText: { fontSize: scaleFont(12), fontWeight: "700", color: "#64748b" },
+  tabText: {
+    fontSize: isSmallDevice ? scaleFont(10.5) : scaleFont(11.5),
+    fontWeight: "700",
+    color: "#64748b",
+    includeFontPadding: false,
+  },
   tabTextActive: { color: "#fff" },
   search: {
     marginHorizontal: scaleFont(16),

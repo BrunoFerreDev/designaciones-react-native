@@ -11,14 +11,16 @@ const clampedScale = Math.min(Math.max(horizontalScale, 0.85), 1.25);
 
 /**
  * Escala un tamaño de fuente de manera proporcional al ancho del dispositivo.
- * Aplica PixelRatio para evitar fuentes borrosas en pantallas de alta densidad.
+ * Normaliza contra PixelRatio.getFontScale() para evitar que el ajuste de accesibilidad
+ * del sistema de Android (fuente Grande/Muy grande) duplique excesivamente el tamaño y corte palabras.
  */
 export function scaleFont(size: number): number {
-  const scaled = size * clampedScale;
-  if (Platform.OS === 'ios') {
-    return Math.round(PixelRatio.roundToNearestPixel(scaled));
-  }
-  return Math.round(PixelRatio.roundToNearestPixel(scaled)) - (PixelRatio.get() >= 3 ? 0.5 : 0);
+  const fontScale = PixelRatio.getFontScale() || 1;
+  // Si el usuario tiene fuente aumentada en el sistema, mitigamos la duplicación
+  const fontScaleAdjustment = fontScale > 1 ? Math.sqrt(fontScale) : 1;
+  const normalizedScale = clampedScale / fontScaleAdjustment;
+  const scaled = size * normalizedScale;
+  return Math.round(PixelRatio.roundToNearestPixel(scaled));
 }
 
 /**
@@ -28,7 +30,8 @@ export function scaleWidth(size: number): number {
   return Math.round(size * clampedScale);
 }
 
-export const isSmallDevice = SCREEN_WIDTH < 360;
+// Dispositivos compactos como Moto G04 (~360dp) o iPhone SE (375dp)
+export const isSmallDevice = SCREEN_WIDTH <= 375;
 export const isTablet = SCREEN_WIDTH >= 768;
 
 export const SCREEN = {

@@ -30,7 +30,7 @@ export type TabParamList = {
 };
 
 import { Ionicons } from "@expo/vector-icons";
-import { scaleFont } from "../utils/responsive";
+import { scaleFont, isSmallDevice } from "../utils/responsive";
 import tw from "../theme/tailwind";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -47,17 +47,21 @@ function MainTabs() {
         tabBarActiveTintColor: "#1a1a2e",
         tabBarInactiveTintColor: "#94a3b8",
         tabBarLabelStyle: {
-          fontSize: scaleFont(11),
+          fontSize: isSmallDevice ? scaleFont(9.5) : scaleFont(10.5),
           fontWeight: "700",
-          marginBottom: 4,
+          marginBottom: 3,
+          includeFontPadding: false,
+        },
+        tabBarItemStyle: {
+          paddingHorizontal: 0,
         },
         tabBarStyle: {
           backgroundColor: "#ffffff",
           borderTopColor: "#e2e8f0",
           borderTopWidth: 1,
-          height: scaleFont(58),
-          paddingTop: 6,
-          paddingBottom: 6,
+          height: scaleFont(56),
+          paddingTop: 5,
+          paddingBottom: 5,
         },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap = "help-circle-outline";

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../context/AuthContext";
 import { designacionService } from "../../services/designacionService";
 import { arbitroService } from "../../services/arbitroService";
@@ -208,44 +209,91 @@ export default function HomeScreen() {
         />
       ) : (
         <View style={styles.kpiGrid}>
-          <View style={styles.kpiCard}>
+          {/* Tarjeta 1: Designaciones */}
+          <TouchableOpacity
+            style={styles.kpiCard}
+            onPress={() => (navigation as any).navigate("Designaciones")}
+            activeOpacity={0.7}
+          >
+            <View style={styles.kpiCardTop}>
+              <View style={[styles.kpiIconWrapper, { backgroundColor: "#eff6ff" }]}>
+                <Ionicons name="calendar" size={scaleFont(15)} color="#2563eb" />
+              </View>
+              <View style={[styles.kpiBadge, { backgroundColor: "#dbeafe" }]}>
+                <Text style={[styles.kpiBadgeText, { color: "#1d4ed8" }]}>Jornadas</Text>
+              </View>
+            </View>
             <Text style={styles.kpiNumber}>{totalDes}</Text>
             <Text style={styles.kpiLabel}>Designaciones</Text>
             <Text style={styles.kpiSub}>
-              {confirmadasDes} confirmadas · {pendientesDes} pend.
+              {confirmadasDes} conf. · {pendientesDes} pend.
             </Text>
-          </View>
+          </TouchableOpacity>
 
-          <View style={styles.kpiCard}>
-            <Text style={[styles.kpiNumber, { color: "#27ae60" }]}>
+          {/* Tarjeta 2: Árbitros Disponibles */}
+          <TouchableOpacity
+            style={styles.kpiCard}
+            onPress={() => isFullAdmin && (navigation as any).navigate("Arbitros")}
+            activeOpacity={isFullAdmin ? 0.7 : 1}
+          >
+            <View style={styles.kpiCardTop}>
+              <View style={[styles.kpiIconWrapper, { backgroundColor: "#f0fdf4" }]}>
+                <Ionicons name="people" size={scaleFont(15)} color="#16a34a" />
+              </View>
+              <View style={[styles.kpiBadge, { backgroundColor: "#dcfce7" }]}>
+                <Text style={[styles.kpiBadgeText, { color: "#15803d" }]}>Finde</Text>
+              </View>
+            </View>
+            <Text style={[styles.kpiNumber, { color: "#16a34a" }]}>
               {dispSabado} / {dispDomingo}
             </Text>
-            <Text style={styles.kpiLabel}>Disponibles Finde</Text>
+            <Text style={styles.kpiLabel}>Disponibles</Text>
             <Text style={styles.kpiSub}>Sábado / Domingo</Text>
-          </View>
+          </TouchableOpacity>
 
-          <View style={styles.kpiCard}>
-            <Text style={[styles.kpiNumber, { color: "#e74c3c" }]}>
+          {/* Tarjeta 3: Sanciones */}
+          <TouchableOpacity
+            style={styles.kpiCard}
+            onPress={() => isFullAdmin && (navigation as any).navigate("Suspensiones")}
+            activeOpacity={isFullAdmin ? 0.7 : 1}
+          >
+            <View style={styles.kpiCardTop}>
+              <View style={[styles.kpiIconWrapper, { backgroundColor: "#fef2f2" }]}>
+                <Ionicons name="alert-circle" size={scaleFont(15)} color="#dc2626" />
+              </View>
+              <View style={[styles.kpiBadge, { backgroundColor: "#fee2e2" }]}>
+                <Text style={[styles.kpiBadgeText, { color: "#b91c1c" }]}>Activas</Text>
+              </View>
+            </View>
+            <Text style={[styles.kpiNumber, { color: "#dc2626" }]}>
               {suspensionesActivas}
             </Text>
-            <Text style={styles.kpiLabel}>Sanciones / Susp.</Text>
-            <Text style={styles.kpiSub}>Registros activos</Text>
-          </View>
+            <Text style={styles.kpiLabel}>Sanciones</Text>
+            <Text style={styles.kpiSub}>Registros vigentes</Text>
+          </TouchableOpacity>
 
+          {/* Tarjeta 4: Mi Perfil */}
           <TouchableOpacity
             style={[styles.kpiCard, styles.kpiCardProfile]}
             onPress={() => navigation.navigate("Perfil")}
-            activeOpacity={0.8}
+            activeOpacity={0.7}
           >
-            <View style={styles.profileCardTop}>
-              <Text style={styles.profileIcon}>👤</Text>
-              <View style={styles.badgeProfile}>
-                <Text style={styles.badgeProfileText}>Ver Perfil →</Text>
+            <View style={styles.kpiCardTop}>
+              <View style={[styles.kpiIconWrapper, { backgroundColor: "#f1f5f9" }]}>
+                <Ionicons name="person" size={scaleFont(15)} color="#1a1a2e" />
+              </View>
+              <View style={[styles.kpiBadge, { backgroundColor: "#e2e8f0" }]}>
+                <Text style={[styles.kpiBadgeText, { color: "#0f172a" }]}>Cuenta</Text>
               </View>
             </View>
-            <Text style={styles.kpiLabel}>Mi Perfil</Text>
-            <Text style={styles.kpiSub} numberOfLines={1}>
-              {arbitro?.nombreCompleto || "Configuración y cuenta"}
+            <Text style={styles.kpiNumber} numberOfLines={1}>
+              {arbitro?.nombre || "Mi"}
+            </Text>
+            <Text style={styles.kpiLabel} numberOfLines={1}>
+              {arbitro?.nombreCompleto || "Mi Perfil"}
+            </Text>
+            <Text style={[styles.kpiSub, { color: "#2563eb", fontWeight: "600" }]}>
+              Ver detalles →
             </Text>
           </TouchableOpacity>
         </View>
@@ -408,32 +456,36 @@ const styles = StyleSheet.create({
   },
   actionBtn: {
     flex: 1,
-    minWidth: isSmallDevice ? 90 : 100,
-    paddingVertical: scaleFont(12),
-    paddingHorizontal: scaleFont(8),
+    minWidth: isSmallDevice ? 75 : 95,
+    paddingVertical: scaleFont(10),
+    paddingHorizontal: scaleFont(6),
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
     elevation: 2,
   },
-  actionIcon: { fontSize: scaleFont(20), marginBottom: 4 },
+  actionIcon: { fontSize: scaleFont(18), marginBottom: 4 },
   actionLabel: {
     color: "#fff",
-    fontSize: scaleFont(11),
+    fontSize: isSmallDevice ? scaleFont(10) : scaleFont(11),
     fontWeight: "700",
     textAlign: "center",
+    includeFontPadding: false,
   },
   kpiGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 10,
-    marginBottom: 20,
+    justifyContent: "space-between",
+    rowGap: scaleFont(10),
+    marginBottom: scaleFont(20),
   },
   kpiCard: {
-    width: "48%",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: scaleFont(12),
+    width: "48.5%",
+    backgroundColor: "#ffffff",
+    borderRadius: 14,
+    padding: scaleFont(11),
+    minHeight: scaleFont(108),
+    justifyContent: "space-between",
     elevation: 1,
     borderWidth: 1,
     borderColor: "#e2e8f0",
@@ -442,32 +494,48 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8fafc",
     borderColor: "#cbd5e1",
   },
-  profileCardTop: {
+  kpiCardTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 6,
+    marginBottom: scaleFont(6),
   },
-  profileIcon: { fontSize: scaleFont(22) },
-  badgeProfile: {
-    backgroundColor: "#1a1a2e",
+  kpiIconWrapper: {
+    width: scaleFont(28),
+    height: scaleFont(28),
+    borderRadius: scaleFont(8),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  kpiBadge: {
     borderRadius: 6,
-    paddingHorizontal: 6,
+    paddingHorizontal: scaleFont(6),
     paddingVertical: 2,
   },
-  badgeProfileText: {
-    color: "#fff",
-    fontSize: scaleFont(10),
+  kpiBadgeText: {
+    fontSize: scaleFont(9.5),
     fontWeight: "700",
+    includeFontPadding: false,
   },
-  kpiNumber: { fontSize: scaleFont(24), fontWeight: "900", color: "#0f172a" },
+  kpiNumber: {
+    fontSize: isSmallDevice ? scaleFont(18) : scaleFont(20),
+    fontWeight: "900",
+    color: "#0f172a",
+    includeFontPadding: false,
+  },
   kpiLabel: {
-    fontSize: scaleFont(12),
+    fontSize: isSmallDevice ? scaleFont(11) : scaleFont(12),
     fontWeight: "700",
     color: "#334155",
     marginTop: 2,
+    includeFontPadding: false,
   },
-  kpiSub: { fontSize: scaleFont(10), color: "#64748b", marginTop: 4 },
+  kpiSub: {
+    fontSize: scaleFont(9.5),
+    color: "#64748b",
+    marginTop: 2,
+    includeFontPadding: false,
+  },
   proximaCard: {
     backgroundColor: "#fff",
     borderRadius: 12,

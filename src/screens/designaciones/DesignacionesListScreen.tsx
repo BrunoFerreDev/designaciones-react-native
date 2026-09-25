@@ -17,7 +17,7 @@ import { useAuth } from "../../context/AuthContext";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import { designacionService } from "../../services/designacionService";
 import DesignacionModal from "../../components/modals/DesignacionModal";
-import { scaleFont } from "../../utils/responsive";
+import { scaleFont, isSmallDevice } from "../../utils/responsive";
 import tw from "../../theme/tailwind";
 import {
   formatDesignacionWhatsApp,
@@ -344,22 +344,33 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: scaleFont(16),
+    paddingHorizontal: scaleFont(14),
     paddingBottom: scaleFont(10),
     paddingTop: scaleFont(44),
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#e2e8f0",
   },
-  title: { fontSize: scaleFont(20), fontWeight: "bold", color: "#0f172a" },
+  title: {
+    fontSize: isSmallDevice ? scaleFont(18) : scaleFont(20),
+    fontWeight: "bold",
+    color: "#0f172a",
+    flexShrink: 1,
+    includeFontPadding: false,
+  },
   btnAdd: {
     backgroundColor: "#1a1a2e",
     paddingVertical: scaleFont(8),
-    paddingHorizontal: scaleFont(14),
+    paddingHorizontal: scaleFont(12),
     borderRadius: 8,
     elevation: 2,
   },
-  btnAddText: { color: "#fff", fontSize: scaleFont(12), fontWeight: "700" },
+  btnAddText: {
+    color: "#fff",
+    fontSize: scaleFont(12),
+    fontWeight: "700",
+    includeFontPadding: false,
+  },
   card: {
     backgroundColor: "#fff",
     borderRadius: 12,
@@ -380,21 +391,44 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#0f172a",
     flex: 1,
+    marginRight: 8,
+    includeFontPadding: false,
   },
   badge: {
     borderRadius: 6,
     paddingHorizontal: scaleFont(8),
     paddingVertical: 3,
+    flexShrink: 0,
   },
-  badgeText: { color: "#fff", fontSize: scaleFont(11), fontWeight: "700" },
-  fecha: { fontSize: scaleFont(13), color: "#334155", marginBottom: 2 },
-  etapa: { fontSize: scaleFont(12), color: "#64748b" },
-  detalle: { fontSize: scaleFont(12), color: "#ef4444", marginTop: 4 },
+  badgeText: {
+    color: "#fff",
+    fontSize: scaleFont(11),
+    fontWeight: "700",
+    includeFontPadding: false,
+  },
+  fecha: {
+    fontSize: scaleFont(13),
+    color: "#334155",
+    marginBottom: 2,
+    includeFontPadding: false,
+  },
+  etapa: {
+    fontSize: scaleFont(12),
+    color: "#64748b",
+    includeFontPadding: false,
+  },
+  detalle: {
+    fontSize: scaleFont(12),
+    color: "#ef4444",
+    marginTop: 4,
+    includeFontPadding: false,
+  },
   empty: {
     textAlign: "center",
     color: "#94a3b8",
     marginTop: 60,
     fontSize: scaleFont(14),
+    includeFontPadding: false,
   },
   cardActionsRow: {
     flexDirection: "row",
@@ -404,7 +438,8 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: "#f1f5f9",
-    gap: 8,
+    flexWrap: "wrap",
+    gap: scaleFont(6),
   },
   btnCardReprogramar: {
     flexDirection: "row",
