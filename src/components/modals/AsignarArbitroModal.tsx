@@ -16,6 +16,7 @@ import { GetArbitroDTO } from "../../types";
 import { arbitroService } from "../../services/arbitroService";
 import { designacionService } from "../../services/designacionService";
 import { scaleFont, isSmallDevice } from "../../utils/responsive";
+import tw, { twFont } from "../../theme/tailwind";
 
 interface Props {
   visible: boolean;
@@ -244,10 +245,10 @@ export default function AsignarArbitroModal({
       <View style={styles.overlay}>
         <View style={styles.modal}>
           {/* Encabezado */}
-          <View style={styles.header}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.title}>Asignar Árbitro</Text>
-              <Text style={styles.subTitle}>
+          <View style={tw`flex-row items-start justify-between mb-3 w-full`}>
+            <View style={tw`flex-1 min-w-0 mr-2`}>
+              <Text style={twFont('text-base font-extrabold text-slate-900')}>Asignar Árbitro</Text>
+              <Text numberOfLines={1} style={twFont('text-xs text-slate-500 mt-0.5')}>
                 {diaDetectado === "sabado"
                   ? "📅 Jornada de Sábado · Solo activos disponibles"
                   : diaDetectado === "domingo"
@@ -261,7 +262,7 @@ export default function AsignarArbitroModal({
           </View>
 
           {/* Filtros de Disponibilidad por Día */}
-          <View style={styles.pillsRow}>
+          <View style={tw`flex-row flex-wrap gap-1.5 mb-2.5`}>
             <TouchableOpacity
               style={[
                 styles.pill,
@@ -271,8 +272,8 @@ export default function AsignarArbitroModal({
             >
               <Text
                 style={[
-                  styles.pillText,
-                  diaEfectivo === "sabado" && styles.pillTextActive,
+                  twFont('text-xs font-semibold text-slate-600'),
+                  diaEfectivo === "sabado" && twFont('text-white font-bold'),
                 ]}
               >
                 Sábado {diaDetectado === "sabado" ? "✓" : ""}
@@ -288,8 +289,8 @@ export default function AsignarArbitroModal({
             >
               <Text
                 style={[
-                  styles.pillText,
-                  diaEfectivo === "domingo" && styles.pillTextActive,
+                  twFont('text-xs font-semibold text-slate-600'),
+                  diaEfectivo === "domingo" && twFont('text-white font-bold'),
                 ]}
               >
                 Domingo {diaDetectado === "domingo" ? "✓" : ""}
@@ -305,8 +306,8 @@ export default function AsignarArbitroModal({
             >
               <Text
                 style={[
-                  styles.pillText,
-                  diaEfectivo === "todos" && styles.pillTextActive,
+                  twFont('text-xs font-semibold text-slate-600'),
+                  diaEfectivo === "todos" && twFont('text-white font-bold'),
                 ]}
               >
                 Todos activos
@@ -315,12 +316,12 @@ export default function AsignarArbitroModal({
           </View>
 
           {/* Switch: Ignorar ya designados en otra cancha */}
-          <View style={styles.switchRow}>
-            <View style={{ flex: 1, marginRight: 8 }}>
-              <Text style={styles.switchLabel}>
+          <View style={tw`flex-row items-center justify-between bg-slate-50 py-1.5 px-3 rounded-xl border border-slate-200 mb-2.5 w-full`}>
+            <View style={tw`flex-1 min-w-0 mr-2`}>
+              <Text style={twFont('text-xs font-bold text-slate-800')}>
                 Ignorar ya designados hoy
               </Text>
-              <Text style={styles.switchHelp}>
+              <Text numberOfLines={1} style={twFont('text-[11px] text-slate-500 mt-0.5')}>
                 {cantidadOcupados > 0
                   ? `${cantidadOcupados} árbitro(s) ya asignado(s) en otra cancha`
                   : "Sin solapamientos en otras canchas"}
@@ -345,7 +346,7 @@ export default function AsignarArbitroModal({
 
           {/* Contador de resultados */}
           <View style={styles.counterRow}>
-            <Text style={styles.counterText}>
+            <Text style={twFont('text-[11px] font-semibold text-slate-500')}>
               {loadingList
                 ? "Cargando árbitros..."
                 : `${filtered.length} árbitro(s) disponible(s)`}
@@ -372,7 +373,7 @@ export default function AsignarArbitroModal({
                     size={scaleFont(32)}
                     color="#94a3b8"
                   />
-                  <Text style={styles.empty}>
+                  <Text style={twFont('text-xs text-slate-400 mt-2 text-center')}>
                     No hay árbitros disponibles con estos filtros
                   </Text>
                 </View>
@@ -391,34 +392,34 @@ export default function AsignarArbitroModal({
                     onPress={() => handleSelectArbitro(item.idArbitro)}
                     activeOpacity={0.7}
                   >
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.itemNombre}>
+                    <View style={tw`flex-1 min-w-0 mr-2`}>
+                      <Text numberOfLines={1} style={twFont('text-sm font-bold text-slate-900')}>
                         {item.apellido}, {item.nombre}
                       </Text>
-                      <Text style={styles.itemCat}>
+                      <Text numberOfLines={1} style={twFont('text-xs text-slate-500 mt-0.5')}>
                         {item.categoria || "Sin cat"} · 📱 {item.whatsapp}
                       </Text>
 
                       {/* Disponibilidad e info */}
-                      <View style={styles.tagsRow}>
+                      <View style={tw`flex-row flex-wrap gap-1 mt-1`}>
                         {item.disponibleSabado && (
                           <View style={styles.tagSab}>
-                            <Text style={styles.tagSabText}>Sáb ✓</Text>
+                            <Text style={twFont('text-[10px] font-bold text-emerald-700')}>Sáb ✓</Text>
                           </View>
                         )}
                         {item.disponibleDomingo && (
                           <View style={styles.tagDom}>
-                            <Text style={styles.tagDomText}>Dom ✓</Text>
+                            <Text style={twFont('text-[10px] font-bold text-sky-700')}>Dom ✓</Text>
                           </View>
                         )}
                         {item.tieneAuto && (
                           <View style={styles.tagAuto}>
-                            <Text style={styles.tagAutoText}>🚗 Auto</Text>
+                            <Text style={twFont('text-[10px] font-semibold text-slate-600')}>🚗 Auto</Text>
                           </View>
                         )}
                         {ocupadoEn && (
                           <View style={styles.tagOcupado}>
-                            <Text style={styles.tagOcupadoText}>
+                            <Text numberOfLines={1} style={twFont('text-[10px] font-bold text-amber-800')}>
                               ⚠️ En: {ocupadoEn}
                             </Text>
                           </View>
@@ -446,7 +447,7 @@ export default function AsignarArbitroModal({
               onPress={onClose}
               disabled={loading}
             >
-              <Text style={styles.btnCancelText}>Cancelar</Text>
+              <Text style={twFont('text-xs font-bold text-slate-600')}>Cancelar</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -459,7 +460,7 @@ export default function AsignarArbitroModal({
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.btnSaveText}>Asignar Árbitro</Text>
+                <Text style={twFont('text-xs font-bold text-white')}>Asignar Árbitro</Text>
               )}
             </TouchableOpacity>
           </View>

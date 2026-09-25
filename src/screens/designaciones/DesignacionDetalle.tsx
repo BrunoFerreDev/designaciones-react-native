@@ -11,7 +11,7 @@ import { RootStackParamList } from '../../navigation/AppNavigator';
 import AsignarArbitroModal from '../../components/modals/AsignarArbitroModal';
 import DesignacionModal from '../../components/modals/DesignacionModal';
 import { scaleFont } from '../../utils/responsive';
-import tw from '../../theme/tailwind';
+import tw, { twFont } from '../../theme/tailwind';
 import {
   formatDesignacionWhatsApp,
   shareMessageWhatsApp,
@@ -175,10 +175,10 @@ export default function DesignacionDetalle() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Encabezado */}
-      <View style={styles.cardHeader}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.cancha}>{canchaNombre}</Text>
-          <Text style={styles.fecha}>{fechaStr}</Text>
+      <View style={tw`flex-row justify-between items-start bg-white p-4 rounded-2xl border border-slate-200 shadow-sm w-full mb-3`}>
+        <View style={tw`flex-1 min-w-0 mr-2`}>
+          <Text numberOfLines={2} style={twFont('text-base font-extrabold text-slate-900')}>{canchaNombre}</Text>
+          <Text numberOfLines={1} style={twFont('text-xs text-slate-500 font-medium mt-1')}>{fechaStr}</Text>
         </View>
         <View
           style={[
@@ -186,25 +186,25 @@ export default function DesignacionDetalle() {
             { backgroundColor: ESTADO_COLOR[designacion.estadoDesignacion] || '#888' },
           ]}
         >
-          <Text style={styles.badgeText}>
+          <Text style={twFont('text-xs font-bold text-white')}>
             {ESTADO_LABEL[designacion.estadoDesignacion] || 'Pendiente'}
           </Text>
         </View>
       </View>
 
       {/* Info Card */}
-      <View style={styles.infoCard}>
-        <Text style={styles.infoRow}>
-          <Text style={styles.infoLabel}>🏆 Etapa: </Text>
+      <View style={tw`bg-white p-4 rounded-2xl border border-slate-200 shadow-sm w-full mb-3`}>
+        <Text style={twFont('text-xs text-slate-700 font-medium mb-1.5')}>
+          <Text style={twFont('text-xs font-bold text-slate-900')}>🏆 Etapa: </Text>
           {designacion.etapaCampeonato?.replace('_', ' ')}
         </Text>
-        <Text style={styles.infoRow}>
-          <Text style={styles.infoLabel}>⚽ Partidos: </Text>
+        <Text style={twFont('text-xs text-slate-700 font-medium mb-1.5')}>
+          <Text style={twFont('text-xs font-bold text-slate-900')}>⚽ Partidos: </Text>
           {designacion.cantidadPartidos}
         </Text>
         {(designacion.detalleDesignacion || designacion.detalleExtra) ? (
-          <Text style={styles.infoRow}>
-            <Text style={styles.infoLabel}>📝 Notas: </Text>
+          <Text style={twFont('text-xs text-slate-700 font-medium')}>
+            <Text style={twFont('text-xs font-bold text-slate-900')}>📝 Notas: </Text>
             {designacion.detalleDesignacion || designacion.detalleExtra}
           </Text>
         ) : null}
@@ -222,7 +222,7 @@ export default function DesignacionDetalle() {
             color="#ffffff"
             style={{ marginRight: 8 }}
           />
-          <Text style={styles.btnShareWhatsAppText}>
+          <Text style={twFont('text-xs font-bold text-white')}>
             Compartir por WhatsApp
           </Text>
         </TouchableOpacity>
@@ -234,13 +234,13 @@ export default function DesignacionDetalle() {
           style={styles.btnEdit}
           onPress={() => setEditModalVisible(true)}
         >
-          <Text style={styles.btnEditText}>✏️ Editar Información de la Jornada</Text>
+          <Text style={twFont('text-xs font-bold text-slate-700')}>✏️ Editar Información de la Jornada</Text>
         </TouchableOpacity>
       )}
 
       {/* Cuadrilla Arbitral */}
-      <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>
+      <View style={tw`flex-row justify-between items-center mt-3 mb-2 w-full`}>
+        <Text style={twFont('text-base font-extrabold text-slate-900')}>
           Cuadrilla Arbitral ({designados.length})
         </Text>
         {isDesignador && (
@@ -248,27 +248,27 @@ export default function DesignacionDetalle() {
             style={styles.btnAddArbitro}
             onPress={() => setAsignarModalVisible(true)}
           >
-            <Text style={styles.btnAddArbitroText}>+ Asignar Árbitro</Text>
+            <Text style={twFont('text-xs font-bold text-white')}>+ Asignar Árbitro</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {designados.length === 0 ? (
         <View style={styles.emptyArbitrosCard}>
-          <Text style={styles.emptyText}>Sin árbitros designados aún</Text>
+          <Text style={twFont('text-xs text-slate-400 text-center')}>Sin árbitros designados aún</Text>
         </View>
       ) : (
         designados.map((d) => {
           const arb = d.arbitro;
           return (
-            <View key={d.idDesignados} style={styles.arbitroCard}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.arbitroNombre}>{arb?.apellido}, {arb?.nombre}</Text>
-                <Text style={styles.arbitroInfo}>
+            <View key={d.idDesignados} style={tw`flex-row items-center justify-between bg-white p-3.5 rounded-xl border border-slate-200 mb-2 w-full`}>
+              <View style={tw`flex-1 min-w-0 mr-2`}>
+                <Text numberOfLines={1} style={twFont('text-sm font-bold text-slate-900')}>{arb?.apellido}, {arb?.nombre}</Text>
+                <Text numberOfLines={1} style={twFont('text-xs text-slate-500 mt-0.5')}>
                   {arb?.categoria || 'Sin cat'} · {d.partidosDirigidos} partido(s)
                 </Text>
                 {d.montoPercibido > 0 && (
-                  <Text style={styles.arbitroMonto}>
+                  <Text numberOfLines={1} style={twFont('text-xs text-emerald-600 font-bold mt-1')}>
                     Honorario: ${d.montoPercibido.toFixed(2)}
                   </Text>
                 )}
@@ -289,8 +289,8 @@ export default function DesignacionDetalle() {
       {/* Acciones de Estado */}
       {isDesignador && (
         <View style={styles.estadoSection}>
-          <Text style={styles.sectionTitle}>Cambiar Estado de la Jornada</Text>
-          <View style={styles.estadoButtonsRow}>
+          <Text style={twFont('text-sm font-bold text-slate-900 mb-2')}>Cambiar Estado de la Jornada</Text>
+          <View style={tw`flex-row flex-wrap gap-1.5 mt-1`}>
             {[0, 1, 2, 3, 4].map((est) => (
               <TouchableOpacity
                 key={est}

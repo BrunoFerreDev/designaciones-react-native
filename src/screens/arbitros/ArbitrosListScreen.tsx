@@ -391,8 +391,18 @@ const styles = StyleSheet.create({
     paddingTop: scaleFont(44),
     backgroundColor: "#fff",
   },
-  title: { fontSize: scaleFont(20), fontWeight: "bold", color: "#0f172a", includeFontPadding: false },
-  subtitle: { fontSize: scaleFont(12), color: "#64748b", marginTop: 2, includeFontPadding: false },
+  title: {
+    fontSize: scaleFont(20),
+    fontWeight: "bold",
+    color: "#0f172a",
+    includeFontPadding: false,
+  },
+  subtitle: {
+    fontSize: scaleFont(12),
+    color: "#64748b",
+    marginTop: 2,
+    includeFontPadding: false,
+  },
   btnAdd: {
     backgroundColor: "#1a1a2e",
     paddingVertical: scaleFont(8),
@@ -400,7 +410,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 2,
   },
-  btnAddText: { color: "#fff", fontSize: scaleFont(12), fontWeight: "700", includeFontPadding: false },
+  btnAddText: {
+    color: "#fff",
+    fontSize: scaleFont(12),
+    fontWeight: "700",
+    includeFontPadding: false,
+  },
   tabsContainer: {
     flexDirection: "row",
     backgroundColor: "#fff",
@@ -459,10 +474,10 @@ const styles = StyleSheet.create({
   nameRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 6,
     flexWrap: "wrap",
   },
-  nombre: { fontSize: scaleFont(15), fontWeight: "700", color: "#0f172a" },
+  nombre: { fontSize: scaleFont(12), fontWeight: "700", color: "#0f172a" },
   statusBadge: {
     borderRadius: 4,
     paddingHorizontal: scaleFont(6),

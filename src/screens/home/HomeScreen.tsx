@@ -22,7 +22,7 @@ import DesignacionModal from "../../components/modals/DesignacionModal";
 import ArbitroModal from "../../components/modals/ArbitroModal";
 import SuspensionModal from "../../components/modals/SuspensionModal";
 import { scaleFont, isSmallDevice } from "../../utils/responsive";
-import tw from "../../theme/tailwind";
+import tw, { twFont } from "../../theme/tailwind";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -131,35 +131,39 @@ export default function HomeScreen() {
       }
     >
       {/* Header */}
-      <View style={styles.header}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.welcome}>Panel de Control</Text>
-          <Text style={styles.name}>
+      <View style={tw`flex-row items-start justify-between mb-5 w-full`}>
+        <View style={tw`flex-1 min-w-0 mr-3`}>
+          <Text style={twFont('text-xs uppercase font-bold text-slate-500 tracking-wider')}>
+            Panel de Control
+          </Text>
+          <Text numberOfLines={1} style={twFont('text-xl font-extrabold text-slate-900 mt-0.5')}>
             {arbitro?.nombreCompleto || arbitro?.username}
           </Text>
-          <View style={styles.rolesContainer}>
+          <View style={tw`flex-row flex-wrap gap-1.5 mt-1.5`}>
             {arbitro?.roles.map((r) => (
               <View key={r} style={styles.roleBadge}>
-                <Text style={styles.roleText}>{r}</Text>
+                <Text style={twFont('text-xs font-bold text-slate-700')}>{r}</Text>
               </View>
             ))}
           </View>
         </View>
         <TouchableOpacity style={styles.btnLogout} onPress={logout}>
-          <Text style={styles.btnLogoutText}>Salir</Text>
+          <Text style={twFont('text-xs font-bold text-red-500')}>Salir</Text>
         </TouchableOpacity>
       </View>
 
       {/* Acciones Rápidas */}
-      <Text style={styles.sectionTitle}>Acciones Rápidas</Text>
-      <View style={styles.actionsGrid}>
+      <Text style={twFont('text-base font-extrabold text-slate-900 mb-3 mt-2')}>
+        Acciones Rápidas
+      </Text>
+      <View style={tw`flex-row flex-wrap gap-2 mb-5 w-full`}>
         {isDesignador && (
           <TouchableOpacity
             style={[styles.actionBtn, { backgroundColor: "#1a1a2e" }]}
             onPress={() => setModalDesVisible(true)}
           >
             <Text style={styles.actionIcon}>📋</Text>
-            <Text style={styles.actionLabel}>+ Designacion</Text>
+            <Text style={twFont('text-xs font-bold text-white text-center')}>+ Designacion</Text>
           </TouchableOpacity>
         )}
 
@@ -169,7 +173,7 @@ export default function HomeScreen() {
             onPress={() => setModalArbVisible(true)}
           >
             <Text style={styles.actionIcon}>👤</Text>
-            <Text style={styles.actionLabel}>+ Árbitro</Text>
+            <Text style={twFont('text-xs font-bold text-white text-center')}>+ Árbitro</Text>
           </TouchableOpacity>
         )}
 
@@ -179,7 +183,7 @@ export default function HomeScreen() {
             onPress={() => setModalSuspVisible(true)}
           >
             <Text style={styles.actionIcon}>⚠️</Text>
-            <Text style={styles.actionLabel}>+ Suspensión</Text>
+            <Text style={twFont('text-xs font-bold text-white text-center')}>+ Suspensión</Text>
           </TouchableOpacity>
         )}
 
@@ -193,14 +197,16 @@ export default function HomeScreen() {
           ) : (
             <>
               <Text style={styles.actionIcon}>🔄</Text>
-              <Text style={styles.actionLabel}>Actualizar</Text>
+              <Text style={twFont('text-xs font-bold text-white text-center')}>Actualizar</Text>
             </>
           )}
         </TouchableOpacity>
       </View>
 
       {/* Tarjetas KPI */}
-      <Text style={styles.sectionTitle}>Métricas en Vivo</Text>
+      <Text style={twFont('text-base font-extrabold text-slate-900 mb-3 mt-2')}>
+        Métricas en Vivo
+      </Text>
       {loading ? (
         <ActivityIndicator
           style={{ marginVertical: 30 }}
@@ -208,7 +214,7 @@ export default function HomeScreen() {
           color="#1a1a2e"
         />
       ) : (
-        <View style={styles.kpiGrid}>
+        <View style={tw`flex-row flex-wrap justify-between gap-y-2.5 mb-5 w-full`}>
           {/* Tarjeta 1: Designaciones */}
           <TouchableOpacity
             style={styles.kpiCard}
@@ -220,12 +226,12 @@ export default function HomeScreen() {
                 <Ionicons name="calendar" size={scaleFont(15)} color="#2563eb" />
               </View>
               <View style={[styles.kpiBadge, { backgroundColor: "#dbeafe" }]}>
-                <Text style={[styles.kpiBadgeText, { color: "#1d4ed8" }]}>Jornadas</Text>
+                <Text style={twFont('text-[10px] font-bold text-blue-700')}>Jornadas</Text>
               </View>
             </View>
-            <Text style={styles.kpiNumber}>{totalDes}</Text>
-            <Text style={styles.kpiLabel}>Designaciones</Text>
-            <Text style={styles.kpiSub}>
+            <Text style={twFont('text-xl font-black text-slate-900')}>{totalDes}</Text>
+            <Text style={twFont('text-xs font-bold text-slate-700 mt-0.5')}>Designaciones</Text>
+            <Text numberOfLines={1} style={twFont('text-[10px] font-medium text-slate-500 mt-0.5')}>
               {confirmadasDes} conf. · {pendientesDes} pend.
             </Text>
           </TouchableOpacity>
@@ -241,14 +247,16 @@ export default function HomeScreen() {
                 <Ionicons name="people" size={scaleFont(15)} color="#16a34a" />
               </View>
               <View style={[styles.kpiBadge, { backgroundColor: "#dcfce7" }]}>
-                <Text style={[styles.kpiBadgeText, { color: "#15803d" }]}>Finde</Text>
+                <Text style={twFont('text-[10px] font-bold text-emerald-700')}>Finde</Text>
               </View>
             </View>
-            <Text style={[styles.kpiNumber, { color: "#16a34a" }]}>
+            <Text style={twFont('text-xl font-black text-emerald-600')}>
               {dispSabado} / {dispDomingo}
             </Text>
-            <Text style={styles.kpiLabel}>Disponibles</Text>
-            <Text style={styles.kpiSub}>Sábado / Domingo</Text>
+            <Text style={twFont('text-xs font-bold text-slate-700 mt-0.5')}>Disponibles</Text>
+            <Text numberOfLines={1} style={twFont('text-[10px] font-medium text-slate-500 mt-0.5')}>
+              Sábado / Domingo
+            </Text>
           </TouchableOpacity>
 
           {/* Tarjeta 3: Sanciones */}
@@ -262,14 +270,16 @@ export default function HomeScreen() {
                 <Ionicons name="alert-circle" size={scaleFont(15)} color="#dc2626" />
               </View>
               <View style={[styles.kpiBadge, { backgroundColor: "#fee2e2" }]}>
-                <Text style={[styles.kpiBadgeText, { color: "#b91c1c" }]}>Activas</Text>
+                <Text style={twFont('text-[10px] font-bold text-red-700')}>Activas</Text>
               </View>
             </View>
-            <Text style={[styles.kpiNumber, { color: "#dc2626" }]}>
+            <Text style={twFont('text-xl font-black text-red-600')}>
               {suspensionesActivas}
             </Text>
-            <Text style={styles.kpiLabel}>Sanciones</Text>
-            <Text style={styles.kpiSub}>Registros vigentes</Text>
+            <Text style={twFont('text-xs font-bold text-slate-700 mt-0.5')}>Sanciones</Text>
+            <Text numberOfLines={1} style={twFont('text-[10px] font-medium text-slate-500 mt-0.5')}>
+              Registros vigentes
+            </Text>
           </TouchableOpacity>
 
           {/* Tarjeta 4: Mi Perfil */}
@@ -283,16 +293,16 @@ export default function HomeScreen() {
                 <Ionicons name="person" size={scaleFont(15)} color="#1a1a2e" />
               </View>
               <View style={[styles.kpiBadge, { backgroundColor: "#e2e8f0" }]}>
-                <Text style={[styles.kpiBadgeText, { color: "#0f172a" }]}>Cuenta</Text>
+                <Text style={twFont('text-[10px] font-bold text-slate-800')}>Cuenta</Text>
               </View>
             </View>
-            <Text style={styles.kpiNumber} numberOfLines={1}>
+            <Text numberOfLines={1} style={twFont('text-xl font-black text-slate-900')}>
               {arbitro?.nombre || "Mi"}
             </Text>
-            <Text style={styles.kpiLabel} numberOfLines={1}>
+            <Text numberOfLines={1} style={twFont('text-xs font-bold text-slate-700 mt-0.5')}>
               {arbitro?.nombreCompleto || "Mi Perfil"}
             </Text>
-            <Text style={[styles.kpiSub, { color: "#2563eb", fontWeight: "600" }]}>
+            <Text numberOfLines={1} style={twFont('text-[10px] font-semibold text-blue-600 mt-0.5')}>
               Ver detalles →
             </Text>
           </TouchableOpacity>
@@ -300,22 +310,22 @@ export default function HomeScreen() {
       )}
 
       {/* Próximas Designaciones */}
-      <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>Últimas Jornadas</Text>
+      <View style={tw`flex-row justify-between items-center mt-3 mb-2 w-full`}>
+        <Text style={twFont('text-base font-extrabold text-slate-900')}>Últimas Jornadas</Text>
         <TouchableOpacity onPress={() => (navigation as any).navigate('Designaciones')}>
-          <Text style={styles.linkText}>Ver todas →</Text>
+          <Text style={twFont('text-xs font-bold text-blue-600')}>Ver todas →</Text>
         </TouchableOpacity>
       </View>
 
       {proximas.length === 0 ? (
         <View style={styles.emptyCard}>
-          <Text style={styles.emptyText}>No hay designaciones registradas</Text>
+          <Text style={twFont('text-xs text-slate-400 mb-3 text-center')}>No hay designaciones registradas</Text>
           {isDesignador && (
             <TouchableOpacity
               style={styles.btnCrearEmpty}
               onPress={() => setModalDesVisible(true)}
             >
-              <Text style={styles.btnCrearEmptyText}>+ Crear la primera</Text>
+              <Text style={twFont('text-xs font-bold text-white')}>+ Crear la primera</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -330,15 +340,17 @@ export default function HomeScreen() {
           return (
             <TouchableOpacity
               key={item.idDesignacion}
-              style={styles.proximaCard}
+              style={tw`bg-white rounded-xl p-3 mb-2.5 border border-slate-200 shadow-sm w-full`}
               onPress={() =>
                 navigation.navigate("DesignacionDetalle", {
                   idDesignacion: item.idDesignacion,
                 })
               }
             >
-              <View style={styles.proximaHeader}>
-                <Text style={styles.proximaCancha}>{canchaNombre}</Text>
+              <View style={tw`flex-row justify-between items-start w-full mb-1`}>
+                <Text numberOfLines={1} style={twFont('text-sm font-bold text-slate-900 flex-1 min-w-0 mr-2')}>
+                  {canchaNombre}
+                </Text>
                 <View
                   style={[
                     styles.badge,
@@ -348,12 +360,12 @@ export default function HomeScreen() {
                     },
                   ]}
                 >
-                  <Text style={styles.badgeText}>
+                  <Text style={twFont('text-xs font-bold text-white')}>
                     {ESTADO_LABEL[item.estadoDesignacion] || "Pendiente"}
                   </Text>
                 </View>
               </View>
-              <Text style={styles.proximaSub}>
+              <Text numberOfLines={1} style={twFont('text-xs text-slate-500 mt-0.5')}>
                 📅 {fechaStr} · {item.cantidadPartidos} partido(s)
               </Text>
             </TouchableOpacity>

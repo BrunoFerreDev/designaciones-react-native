@@ -18,7 +18,7 @@ import { RootStackParamList } from "../../navigation/AppNavigator";
 import { designacionService } from "../../services/designacionService";
 import DesignacionModal from "../../components/modals/DesignacionModal";
 import { scaleFont, isSmallDevice } from "../../utils/responsive";
-import tw from "../../theme/tailwind";
+import tw, { twFont } from "../../theme/tailwind";
 import {
   formatDesignacionWhatsApp,
   formatTodasAceptadasWhatsApp,
@@ -194,15 +194,17 @@ export default function DesignacionesListScreen() {
 
     return (
       <TouchableOpacity
-        style={styles.card}
+        style={tw`bg-white rounded-2xl p-4 mb-3 border border-slate-200 shadow-sm w-full`}
         onPress={() =>
           navigation.navigate("DesignacionDetalle", {
             idDesignacion: item.idDesignacion,
           })
         }
       >
-        <View style={styles.cardHeader}>
-          <Text style={styles.cancha}>{canchaNombre}</Text>
+        <View style={tw`flex-row justify-between items-start w-full mb-1.5`}>
+          <Text numberOfLines={2} style={twFont('text-sm font-bold text-slate-900 flex-1 min-w-0 mr-2')}>
+            {canchaNombre}
+          </Text>
           <View
             style={[
               styles.badge,
@@ -211,26 +213,26 @@ export default function DesignacionesListScreen() {
               },
             ]}
           >
-            <Text style={styles.badgeText}>
+            <Text style={twFont('text-xs font-bold text-white')}>
               {ESTADO_LABEL[item.estadoDesignacion] || "Pendiente"}
             </Text>
           </View>
         </View>
-        <Text style={styles.fecha}>
+        <Text numberOfLines={1} style={twFont('text-xs text-slate-600 font-medium mb-1')}>
           📅 {fecha} · {item.cantidadPartidos} partido(s)
         </Text>
-        <Text style={styles.etapa}>
+        <Text numberOfLines={1} style={twFont('text-xs text-slate-500 font-semibold mb-1')}>
           🏆 {item.etapaCampeonato?.replace("_", " ")}
         </Text>
         {item.detalleDesignacion || item.detalleExtra ? (
-          <Text style={styles.detalle}>
+          <Text numberOfLines={2} style={twFont('text-xs text-slate-500 italic mt-1')}>
             {item.detalleDesignacion || item.detalleExtra}
           </Text>
         ) : null}
 
         {/* Acciones directas en la tarjeta */}
         {(item.estadoDesignacion === 1 || isDesignador) && (
-          <View style={styles.cardActionsRow}>
+          <View style={tw`flex-row flex-wrap gap-2 mt-2.5 pt-2.5 border-t border-slate-100 items-center`}>
             {item.estadoDesignacion === 1 && (
               <TouchableOpacity
                 style={styles.btnCardWhatsapp}
@@ -242,7 +244,7 @@ export default function DesignacionesListScreen() {
                   color="#15803d"
                   style={{ marginRight: 4 }}
                 />
-                <Text style={styles.btnCardWhatsappText}>WhatsApp</Text>
+                <Text style={twFont('text-xs font-bold text-emerald-700')}>WhatsApp</Text>
               </TouchableOpacity>
             )}
 
@@ -259,7 +261,7 @@ export default function DesignacionesListScreen() {
                       color="#2563eb"
                       style={{ marginRight: 4 }}
                     />
-                    <Text style={styles.btnCardReprogramarText}>
+                    <Text style={twFont('text-xs font-bold text-blue-600')}>
                       Reprogramar
                     </Text>
                   </TouchableOpacity>
@@ -286,9 +288,11 @@ export default function DesignacionesListScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBar}>
-        <Text style={styles.title}>Designaciones</Text>
-        <View style={styles.topBarActions}>
+      <View style={tw`flex-row justify-between items-center py-3 px-4 bg-white border-b border-slate-200 w-full`}>
+        <Text numberOfLines={1} style={twFont('text-lg font-black text-slate-900 flex-1 min-w-0 mr-2')}>
+          Designaciones
+        </Text>
+        <View style={tw`flex-row items-center gap-1.5 flex-shrink-0`}>
           {aceptadasCount > 0 && (
             <TouchableOpacity
               style={styles.btnShareAll}
@@ -300,7 +304,7 @@ export default function DesignacionesListScreen() {
                 color="#ffffff"
                 style={{ marginRight: 4 }}
               />
-              <Text style={styles.btnShareAllText}>
+              <Text style={twFont('text-xs font-bold text-white')}>
                 Aceptadas ({aceptadasCount})
               </Text>
             </TouchableOpacity>
@@ -310,7 +314,7 @@ export default function DesignacionesListScreen() {
               style={styles.btnAdd}
               onPress={() => setModalVisible(true)}
             >
-              <Text style={styles.btnAddText}>+ Nueva</Text>
+              <Text style={twFont('text-xs font-bold text-white')}>+ Nueva</Text>
             </TouchableOpacity>
           )}
         </View>
