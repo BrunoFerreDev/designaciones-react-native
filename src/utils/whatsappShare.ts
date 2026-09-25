@@ -1,25 +1,49 @@
 import { Linking, Share } from 'react-native';
 import { GetDesignacionDTO, GetDesignadosDTO } from '../types';
 
-function formatFechaHora(fechaStr: string): string {
+/**
+ * Retorna fecha en formato: "SÁBADO 19 DE SEPTIEMBRE"
+ */
+function getFechaTitulo(fechaStr: string): string {
   try {
     const d = new Date(fechaStr);
-    if (isNaN(d.getTime())) return fechaStr;
+    if (isNaN(d.getTime())) return 'FECHA A CONFIRMAR';
 
-    const dia = d.toLocaleDateString('es-AR', {
-      weekday: 'long',
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-    const hora = d.toLocaleTimeString('es-AR', {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-    const diaCapitalizado = dia.charAt(0).toUpperCase() + dia.slice(1);
-    return `${diaCapitalizado} - ${hora} hs`;
+    const diaSemana = d.toLocaleDateString('es-AR', { weekday: 'long' });
+    const diaMes = d.getDate();
+    const mes = d.toLocaleDateString('es-AR', { month: 'long' });
+    return `${diaSemana} ${diaMes} DE ${mes}`.toUpperCase();
   } catch {
-    return fechaStr;
+    return 'FECHA A CONFIRMAR';
+  }
+}
+
+/**
+ * Retorna el texto del horario.
+ * Si es 12 am (00:00), retorna ", horario a confirmar".
+ * De lo contrario retorna ", horario de inicio [HH:mm]hs" o ", horario de inicio [H]hs".
+ */
+function getHorarioTexto(fechaStr: string): string {
+  try {
+    const d = new Date(fechaStr);
+    if (isNaN(d.getTime())) return ', horario a confirmar';
+
+    const horas = d.getHours();
+    const minutos = d.getMinutes();
+
+    // Si es 12 am (00:00), no poner hora y colocar "horario a confirmar"
+    if (horas === 0 && minutos === 0) {
+      return ', horario a confirmar';
+    }
+
+    if (minutos === 0) {
+      return `, horario de inicio ${horas}hs`;
+    }
+    const hh = String(horas).padStart(2, '0');
+    const mm = String(minutos).padStart(2, '0');
+    return `, horario de inicio ${hh}:${mm}hs`;
+  } catch {
+    return ', horario a confirmar';
   }
 }
 
@@ -30,81 +54,88 @@ export function formatDesignacionWhatsApp(
   d: GetDesignacionDTO,
   arbitros: GetDesignadosDTO[]
 ): string {
-  const canchaNombre = d.cancha?.nombreCancha || 'Predio a confirmar';
-  const fecha = formatFechaHora(d.fecha);
-  const etapa = d.etapaCampeonato ? d.etapaCampeonato.replace(/_/g, ' ') : '';
-  const detalle = d.detalleDesignacion || d.detalleExtra;
+  const fechaTitulo = d.fecha ? getFechaTitulo(d.fecha) : 'FECHA A CONFIRMAR';
+  const canchaNombre = d.cancha?.nombreCancha || 'Cancha a confirmar';
+  const horarioTexto = getHorarioTexto(d.fecha);
 
-  let msg = `⚽ *DESIGNACIÓN ARBITRAL* ⚽\n\n`;
-  msg += `🏟 *Cancha:* ${canchaNombre}\n`;
-  msg += `📅 *Fecha:* ${fecha}\n`;
-  msg += `🏆 *Etapa:* ${etapa} (${d.cantidadPartidos} ${d.cantidadPartidos === 1 ? 'partido' : 'partidos'})\n`;
-  if (detalle) {
-    msg += `📝 *Detalle:* ${detalle}\n`;
-  }
+  let msg = `📋 DESIGNACIÓN DE ÁRBITROS ${fechaTitulo}\n\n`;
+  msg += `  🏟️ ${canchaNombre}${horarioTexto}\n`;
 
-  msg += `\n👥 *Cuadrilla Arbitral:*`;
   if (!arbitros || arbitros.length === 0) {
-    msg += `\n_Sin árbitros designados aún_`;
+    msg += `    • 👤 (Sin árbitros designados aún)`;
   } else {
-    arbitros.forEach((a) => {
+    const lineasArb = arbitros.map((a) => {
       const arb = a.arbitro;
-      const nombre = arb ? `${arb.apellido}, ${arb.nombre}` : 'Árbitro';
-      const cat = arb?.categoria ? ` (${arb.categoria})` : '';
-      const cant = a.partidosDirigidos > 0 ? ` - ${a.partidosDirigidos} partido(s)` : '';
-      msg += `\n• ${nombre}${cat}${cant}`;
+      const nombreCompleto = arb
+        ? `${arb.nombre} ${arb.apellido}`.trim()
+        : 'Árbitro';
+      return `    • 👤 ${nombreCompleto} - Árbitro`;
     });
+    msg += lineasArb.join('\n');
   }
 
   return msg;
 }
 
 /**
- * Formatea todas las designaciones aceptadas consolidadas
+ * Formatea todas las designaciones aceptadas consolidadas con el formato solicitado:
+ * 📋 DESIGNACIONES DE ÁRBITROS SABÁDO 19 DE SEPTIEMBRE
+ *   🏟️ Cancha, horario de inicio 12:45hs (o ", horario a confirmar" si es 00:00)
+ *     • 👤 Nombre Apellido - Árbitro
  */
 export function formatTodasAceptadasWhatsApp(
   items: { designacion: GetDesignacionDTO; arbitros: GetDesignadosDTO[] }[]
 ): string {
   if (items.length === 0) return '';
 
-  let msg = `📋 *DESIGNACIONES CONFIRMADAS*\n`;
-  msg += `*Círculo de Árbitros*\n`;
-  msg += `Total: ${items.length} ${items.length === 1 ? 'jornada confirmada' : 'jornadas confirmadas'}\n`;
-  msg += `═════════════════════════\n\n`;
-
-  items.forEach((item, index) => {
-    const { designacion: d, arbitros } = item;
-    const canchaNombre = d.cancha?.nombreCancha || 'Predio a confirmar';
-    const fecha = formatFechaHora(d.fecha);
-    const etapa = d.etapaCampeonato ? d.etapaCampeonato.replace(/_/g, ' ') : '';
-    const detalle = d.detalleDesignacion || d.detalleExtra;
-
-    msg += `🏟 *${canchaNombre}*\n`;
-    msg += `📅 ${fecha}\n`;
-    msg += `🏆 ${etapa} · ${d.cantidadPartidos} partido(s)\n`;
-    if (detalle) {
-      msg += `📝 ${detalle}\n`;
-    }
-
-    if (arbitros && arbitros.length > 0) {
-      msg += `👥 *Árbitros:*\n`;
-      arbitros.forEach((a) => {
-        const arb = a.arbitro;
-        const nombre = arb ? `${arb.apellido}, ${arb.nombre}` : 'Árbitro';
-        const cat = arb?.categoria ? ` (${arb.categoria})` : '';
-        const cant = a.partidosDirigidos > 0 ? ` [${a.partidosDirigidos} p.]` : '';
-        msg += `  • ${nombre}${cat}${cant}\n`;
-      });
-    } else {
-      msg += `👥 _Sin árbitros designados_\n`;
-    }
-
-    if (index < items.length - 1) {
-      msg += `─────────────────────────\n\n`;
-    }
+  // Agrupar por fecha calendario (YYYY-MM-DD)
+  const gruposPorFecha = new Map<string, typeof items>();
+  items.forEach((item) => {
+    const key = item.designacion.fecha
+      ? item.designacion.fecha.split('T')[0]
+      : 'sin-fecha';
+    const list = gruposPorFecha.get(key) || [];
+    list.push(item);
+    gruposPorFecha.set(key, list);
   });
 
-  return msg;
+  const secciones: string[] = [];
+
+  gruposPorFecha.forEach((jornadas) => {
+    const fechaTitulo = jornadas[0]?.designacion.fecha
+      ? getFechaTitulo(jornadas[0].designacion.fecha)
+      : 'FECHA A CONFIRMAR';
+
+    let bloque = `📋 DESIGNACIONES DE ÁRBITROS ${fechaTitulo}\n\n`;
+
+    const bloquesCanchas = jornadas.map((item) => {
+      const { designacion: d, arbitros } = item;
+      const canchaNombre = d.cancha?.nombreCancha || 'Cancha a confirmar';
+      const horarioTexto = getHorarioTexto(d.fecha);
+
+      let lineaCancha = `  🏟️ ${canchaNombre}${horarioTexto}\n`;
+
+      if (!arbitros || arbitros.length === 0) {
+        lineaCancha += `    • 👤 (Sin árbitros designados)`;
+      } else {
+        const lineasArb = arbitros.map((a) => {
+          const arb = a.arbitro;
+          const nombreCompleto = arb
+            ? `${arb.nombre} ${arb.apellido}`.trim()
+            : 'Árbitro';
+          return `    • 👤 ${nombreCompleto} - Árbitro`;
+        });
+        lineaCancha += lineasArb.join('\n');
+      }
+
+      return lineaCancha;
+    });
+
+    bloque += bloquesCanchas.join('\n\n');
+    secciones.push(bloque);
+  });
+
+  return secciones.join('\n\n');
 }
 
 /**

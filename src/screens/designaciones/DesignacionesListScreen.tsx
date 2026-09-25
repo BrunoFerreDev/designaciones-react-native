@@ -97,7 +97,26 @@ export default function DesignacionesListScreen() {
       const data = await designacionService.getDesignaciones(
         Boolean(isDesignador),
       );
-      setDesignaciones(data);
+
+      // Ordenar por estado: 1- Pendiente (0), 2- Aceptadas/Confirmadas (1), resto después
+      const ordenEstado: Record<number, number> = {
+        0: 1, // 1- Pendiente
+        1: 2, // 2- Aceptada / Confirmada
+        2: 3, // Finalizada
+        4: 4, // Suspendida
+        3: 5, // Cancelada
+      };
+
+      const sorted = [...data].sort((a, b) => {
+        const pesoA = ordenEstado[a.estadoDesignacion] ?? 99;
+        const pesoB = ordenEstado[b.estadoDesignacion] ?? 99;
+        if (pesoA !== pesoB) {
+          return pesoA - pesoB;
+        }
+        return new Date(a.fecha).getTime() - new Date(b.fecha).getTime();
+      });
+
+      setDesignaciones(sorted);
     } catch (e: any) {
       console.warn("Error cargando designaciones de API:", e);
     }
