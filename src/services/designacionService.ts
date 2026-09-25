@@ -8,33 +8,63 @@ import {
 } from '../types';
 
 export const designacionService = {
-  async getDesignaciones(isDesignadorOrAdmin: boolean = false): Promise<GetDesignacionDTO[]> {
-    if (isDesignadorOrAdmin) {
-      try {
-        const res = await apiClient.get<GetDesignacionDTO[]>(ENDPOINTS.DESIGNACIONES_ULTIMAS);
-        if (Array.isArray(res.data)) return res.data;
-      } catch {}
+  async getDesignaciones(
+    isDesignadorOrAdmin?: boolean,
+    filtrarRango14Dias: boolean = true
+  ): Promise<GetDesignacionDTO[]> {
+    let data: GetDesignacionDTO[] = [];
 
+    // 1. Intentar endpoints globales para cualquier usuario (rol árbitro o administrador)
+    try {
+      const res = await apiClient.get<GetDesignacionDTO[]>(ENDPOINTS.DESIGNACIONES_ULTIMAS);
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        data = res.data;
+      }
+    } catch {}
+
+    if (data.length === 0) {
       try {
         const res = await apiClient.get<PageResponse<GetDesignacionDTO> | GetDesignacionDTO[]>(
           ENDPOINTS.DESIGNACIONES,
-          { params: { page: 0, size: 100 } }
+          { params: { page: 0, size: 200 } }
         );
-        if (Array.isArray(res.data)) return res.data;
-        if (res.data && Array.isArray(res.data.content)) return res.data.content;
+        if (Array.isArray(res.data)) {
+          data = res.data;
+        } else if (res.data && Array.isArray(res.data.content)) {
+          data = res.data.content;
+        }
       } catch (error: any) {
-        if (error?.response?.status !== 403) throw error;
+        if (error?.response?.status === 403) {
+          try {
+            const resMe = await apiClient.get<PageResponse<GetDesignacionDTO> | GetDesignacionDTO[]>(
+              ENDPOINTS.ARBITRO_ME_DESIGNACIONES,
+              { params: { page: 0, size: 200 } }
+            );
+            if (Array.isArray(resMe.data)) data = resMe.data;
+            else if (resMe.data && Array.isArray(resMe.data.content)) data = resMe.data.content;
+          } catch {}
+        } else {
+          throw error;
+        }
       }
     }
 
-    // Para árbitro individual (o fallback)
-    const resMe = await apiClient.get<PageResponse<GetDesignacionDTO> | GetDesignacionDTO[]>(
-      ENDPOINTS.ARBITRO_ME_DESIGNACIONES,
-      { params: { page: 0, size: 100 } }
-    );
-    if (Array.isArray(resMe.data)) return resMe.data;
-    if (resMe.data && Array.isArray(resMe.data.content)) return resMe.data.content;
-    return [];
+    // 2. Filtrar en rango de 14 días: del día actual, 7 días antes y 7 días después
+    if (filtrarRango14Dias && data.length > 0) {
+      const now = new Date();
+      const fechaMin = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7, 0, 0, 0, 0);
+      const fechaMax = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7, 23, 59, 59, 999);
+
+      data = data.filter((d) => {
+        if (!d.fecha) return false;
+        const normalized = d.fecha.includes('T') ? d.fecha : d.fecha.replace(' ', 'T');
+        const f = new Date(normalized);
+        if (isNaN(f.getTime())) return true;
+        return f >= fechaMin && f <= fechaMax;
+      });
+    }
+
+    return data;
   },
 
   async getDesignacionById(id: number): Promise<GetDesignacionDTO> {

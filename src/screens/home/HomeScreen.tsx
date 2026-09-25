@@ -79,7 +79,7 @@ export default function HomeScreen() {
   const loadDashboardData = useCallback(async () => {
     try {
       const [resDes, resArb, resSusp] = await Promise.allSettled([
-        designacionService.getDesignaciones(Boolean(canManageDesignaciones)),
+        designacionService.getDesignaciones(),
         canManageArbitros ? arbitroService.getArbitros() : Promise.resolve([]),
         canManageSuspensiones
           ? suspensionService.getSuspensiones(true)
@@ -760,10 +760,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: scaleFont(8),
     paddingVertical: 3,
-    minWidth: scaleFont(74),
+    minWidth: scaleFont(80),
     alignItems: "center",
+    fontSize: scaleFont(11),
     justifyContent: "center",
-    flexShrink: 0,
   },
   badgeText: { color: "#fff", fontSize: scaleFont(11), fontWeight: "700" },
   proximaSub: { fontSize: scaleFont(12), color: "#64748b" },

@@ -12,7 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
-import { GetDesignacionDTO } from "../../types";
+import { GetDesignacionDTO, GetDesignadosDTO } from "../../types";
 import { useAuth } from "../../context/AuthContext";
 import { RootStackParamList } from "../../navigation/AppNavigator";
 import { designacionService } from "../../services/designacionService";
@@ -47,6 +47,7 @@ export default function DesignacionesListScreen() {
   const { arbitro, canManageDesignaciones } = useAuth();
   const navigation = useNavigation<Nav>();
   const [designaciones, setDesignaciones] = useState<GetDesignacionDTO[]>([]);
+  const [designadosMap, setDesignadosMap] = useState<Record<number, GetDesignadosDTO[]>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -94,9 +95,8 @@ export default function DesignacionesListScreen() {
 
   const loadData = useCallback(async () => {
     try {
-      const data = await designacionService.getDesignaciones(
-        Boolean(isDesignador),
-      );
+      // Trae designaciones para cualquier usuario en rango de 14 días (-7 a +7 días)
+      const data = await designacionService.getDesignaciones();
 
       // Ordenar por estado: 1- Pendiente (0), 2- Aceptadas/Confirmadas (1), resto después
       const ordenEstado: Record<number, number> = {
@@ -117,10 +117,23 @@ export default function DesignacionesListScreen() {
       });
 
       setDesignaciones(sorted);
+
+      // Cargar los árbitros asignados a cada designación para que todos los usuarios puedan verlos
+      const designadosResultados = await Promise.all(
+        sorted.map(async (d) => {
+          try {
+            const list = await designacionService.getDesignados(d.idDesignacion);
+            return [d.idDesignacion, list] as const;
+          } catch {
+            return [d.idDesignacion, []] as const;
+          }
+        })
+      );
+      setDesignadosMap(Object.fromEntries(designadosResultados));
     } catch (e: any) {
       console.warn("Error cargando designaciones de API:", e);
     }
-  }, [isDesignador]);
+  }, []);
 
   useEffect(() => {
     loadData().finally(() => setLoading(false));
@@ -248,6 +261,39 @@ export default function DesignacionesListScreen() {
           </Text>
         ) : null}
 
+        {/* Árbitros Asignados (visible para todos los usuarios) */}
+        {(() => {
+          const cuadrilla = designadosMap[item.idDesignacion] || [];
+          return (
+            <View style={tw`mt-2 pt-2 border-t border-slate-100`}>
+              <Text style={twFont("text-xs font-bold text-slate-700 mb-1")}>
+                👥 Árbitros ({cuadrilla.length}):
+              </Text>
+              {cuadrilla.length === 0 ? (
+                <Text style={twFont("text-[11px] text-slate-400 italic")}>
+                  Sin árbitros designados aún
+                </Text>
+              ) : (
+                <View style={tw`flex-row flex-wrap gap-1 mt-0.5`}>
+                  {cuadrilla.map((des) => (
+                    <View
+                      key={des.idDesignados}
+                      style={tw`bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 flex-row items-center mr-1 mb-1`}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        style={twFont("text-[11px] font-semibold text-slate-800")}
+                      >
+                        👤 {des.arbitro?.apellido}, {des.arbitro?.nombre}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </View>
+          );
+        })()}
+
         {/* Acciones directas en la tarjeta */}
         {(item.estadoDesignacion === 1 || isDesignador) && (
           <View
@@ -311,14 +357,22 @@ export default function DesignacionesListScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text
-          numberOfLines={1}
-          style={twFont(
-            "text-lg font-black text-slate-900 flex-1 min-w-0 mr-2",
-          )}
-        >
-          Designaciones
-        </Text>
+        <View style={tw`flex-1 min-w-0 mr-2`}>
+          <Text
+            numberOfLines={1}
+            style={twFont(
+              "text-lg font-black text-slate-900",
+            )}
+          >
+            Designaciones
+          </Text>
+          <Text
+            numberOfLines={1}
+            style={twFont("text-[10.5px] text-slate-500 font-medium mt-0.5")}
+          >
+            📅 Rango: 7 días antes a 7 días después
+          </Text>
+        </View>
         <View style={tw`flex-row items-center gap-1.5 flex-shrink-0`}>
           {aceptadasCount > 0 && (
             <TouchableOpacity
