@@ -158,7 +158,7 @@ export default function HomeScreen() {
             onPress={() => setModalDesVisible(true)}
           >
             <Text style={styles.actionIcon}>📋</Text>
-            <Text style={styles.actionLabel}>+ Designación</Text>
+            <Text style={styles.actionLabel}>+ Designacion</Text>
           </TouchableOpacity>
         )}
 

@@ -53,11 +53,15 @@ export default function DesignacionesListScreen() {
 
   const isDesignador = canManageDesignaciones;
 
-  const aceptadasCount = designaciones.filter((d) => d.estadoDesignacion === 1).length;
+  const aceptadasCount = designaciones.filter(
+    (d) => d.estadoDesignacion === 1,
+  ).length;
 
   async function handleShareIndividual(item: GetDesignacionDTO) {
     try {
-      const arbitros = await designacionService.getDesignados(item.idDesignacion);
+      const arbitros = await designacionService.getDesignados(
+        item.idDesignacion,
+      );
       const msg = formatDesignacionWhatsApp(item, arbitros);
       await shareMessageWhatsApp(msg);
     } catch (e: any) {
@@ -75,9 +79,11 @@ export default function DesignacionesListScreen() {
     try {
       const conArbitros = await Promise.all(
         aceptadas.map(async (d) => {
-          const arbitros = await designacionService.getDesignados(d.idDesignacion);
+          const arbitros = await designacionService.getDesignados(
+            d.idDesignacion,
+          );
           return { designacion: d, arbitros };
-        })
+        }),
       );
       const msg = formatTodasAceptadasWhatsApp(conArbitros);
       await shareMessageWhatsApp(msg);
@@ -117,16 +123,21 @@ export default function DesignacionesListScreen() {
           text: "Reprogramar",
           onPress: async () => {
             try {
-              await designacionService.reprogramarDesignacion(item.idDesignacion);
+              await designacionService.reprogramarDesignacion(
+                item.idDesignacion,
+              );
               Alert.alert("Éxito", "Designación reprogramada.");
               loadData();
             } catch (e: any) {
-              const msg = e?.response?.data?.message || e?.message || "Error al reprogramar";
+              const msg =
+                e?.response?.data?.message ||
+                e?.message ||
+                "Error al reprogramar";
               Alert.alert("Error", msg);
             }
           },
         },
-      ]
+      ],
     );
   }
 
@@ -144,12 +155,13 @@ export default function DesignacionesListScreen() {
               await designacionService.eliminarDesignacion(item.idDesignacion);
               loadData();
             } catch (e: any) {
-              const msg = e?.response?.data?.message || e?.message || "Error al eliminar";
+              const msg =
+                e?.response?.data?.message || e?.message || "Error al eliminar";
               Alert.alert("Error", msg);
             }
           },
         },
-      ]
+      ],
     );
   }
 
@@ -228,7 +240,9 @@ export default function DesignacionesListScreen() {
                       color="#2563eb"
                       style={{ marginRight: 4 }}
                     />
-                    <Text style={styles.btnCardReprogramarText}>Reprogramar</Text>
+                    <Text style={styles.btnCardReprogramarText}>
+                      Reprogramar
+                    </Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
