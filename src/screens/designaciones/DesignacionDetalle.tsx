@@ -12,6 +12,10 @@ import AsignarArbitroModal from '../../components/modals/AsignarArbitroModal';
 import DesignacionModal from '../../components/modals/DesignacionModal';
 import { scaleFont } from '../../utils/responsive';
 import tw from '../../theme/tailwind';
+import {
+  formatDesignacionWhatsApp,
+  shareMessageWhatsApp,
+} from '../../utils/whatsappShare';
 
 type Route = RouteProp<RootStackParamList, 'DesignacionDetalle'>;
 
@@ -37,6 +41,16 @@ export default function DesignacionDetalle() {
   const [editModalVisible, setEditModalVisible] = useState(false);
 
   const isDesignador = canManageDesignaciones;
+
+  async function handleShareWhatsApp() {
+    if (!designacion) return;
+    try {
+      const msg = formatDesignacionWhatsApp(designacion, designados);
+      await shareMessageWhatsApp(msg);
+    } catch {
+      Alert.alert('Error', 'No se pudo compartir la designación');
+    }
+  }
 
   const loadData = useCallback(async () => {
     try {
@@ -195,6 +209,24 @@ export default function DesignacionDetalle() {
           </Text>
         ) : null}
       </View>
+
+      {/* Botón Compartir por WhatsApp (Solo si está Aceptada/Confirmada) */}
+      {designacion.estadoDesignacion === 1 && (
+        <TouchableOpacity
+          style={styles.btnShareWhatsApp}
+          onPress={handleShareWhatsApp}
+        >
+          <Ionicons
+            name="logo-whatsapp"
+            size={scaleFont(18)}
+            color="#ffffff"
+            style={{ marginRight: 8 }}
+          />
+          <Text style={styles.btnShareWhatsAppText}>
+            Compartir por WhatsApp
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {/* Botón Editar Designación */}
       {isDesignador && (
@@ -394,5 +426,21 @@ const styles = StyleSheet.create({
     borderRadius: 10, marginTop: 14,
   },
   btnEliminarText: { color: '#dc2626', fontSize: scaleFont(13), fontWeight: '700' },
+  btnShareWhatsApp: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#16a34a',
+    paddingVertical: scaleFont(11),
+    paddingHorizontal: scaleFont(16),
+    borderRadius: 10,
+    marginBottom: 14,
+    elevation: 2,
+  },
+  btnShareWhatsAppText: {
+    color: '#ffffff',
+    fontSize: scaleFont(13),
+    fontWeight: '700',
+  },
   empty: { textAlign: 'center', marginTop: 60, color: '#94a3b8', fontSize: scaleFont(14) },
 });

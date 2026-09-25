@@ -19,6 +19,11 @@ import { designacionService } from "../../services/designacionService";
 import DesignacionModal from "../../components/modals/DesignacionModal";
 import { scaleFont } from "../../utils/responsive";
 import tw from "../../theme/tailwind";
+import {
+  formatDesignacionWhatsApp,
+  formatTodasAceptadasWhatsApp,
+  shareMessageWhatsApp,
+} from "../../utils/whatsappShare";
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -47,6 +52,39 @@ export default function DesignacionesListScreen() {
   const [modalVisible, setModalVisible] = useState(false);
 
   const isDesignador = canManageDesignaciones;
+
+  const aceptadasCount = designaciones.filter((d) => d.estadoDesignacion === 1).length;
+
+  async function handleShareIndividual(item: GetDesignacionDTO) {
+    try {
+      const arbitros = await designacionService.getDesignados(item.idDesignacion);
+      const msg = formatDesignacionWhatsApp(item, arbitros);
+      await shareMessageWhatsApp(msg);
+    } catch (e: any) {
+      Alert.alert("Error", "No se pudo preparar el mensaje de WhatsApp");
+    }
+  }
+
+  async function handleShareTodasAceptadas() {
+    const aceptadas = designaciones.filter((d) => d.estadoDesignacion === 1);
+    if (aceptadas.length === 0) {
+      Alert.alert("Aviso", "No hay designaciones aceptadas para compartir.");
+      return;
+    }
+
+    try {
+      const conArbitros = await Promise.all(
+        aceptadas.map(async (d) => {
+          const arbitros = await designacionService.getDesignados(d.idDesignacion);
+          return { designacion: d, arbitros };
+        })
+      );
+      const msg = formatTodasAceptadasWhatsApp(conArbitros);
+      await shareMessageWhatsApp(msg);
+    } catch (e: any) {
+      Alert.alert("Error", "Error al recopilar designaciones para WhatsApp");
+    }
+  }
 
   const loadData = useCallback(async () => {
     try {
@@ -160,23 +198,51 @@ export default function DesignacionesListScreen() {
         ) : null}
 
         {/* Acciones directas en la tarjeta */}
-        {isDesignador && (
+        {(item.estadoDesignacion === 1 || isDesignador) && (
           <View style={styles.cardActionsRow}>
-            {item.estadoDesignacion === 3 && (
+            {item.estadoDesignacion === 1 && (
               <TouchableOpacity
-                style={styles.btnCardReprogramar}
-                onPress={() => handleReprogramar(item)}
+                style={styles.btnCardWhatsapp}
+                onPress={() => handleShareIndividual(item)}
               >
-                <Ionicons name="refresh-circle-outline" size={scaleFont(16)} color="#2563eb" style={{ marginRight: 4 }} />
-                <Text style={styles.btnCardReprogramarText}>Reprogramar</Text>
+                <Ionicons
+                  name="logo-whatsapp"
+                  size={scaleFont(15)}
+                  color="#15803d"
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={styles.btnCardWhatsappText}>WhatsApp</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity
-              style={styles.btnCardDelete}
-              onPress={() => handleEliminar(item)}
-            >
-              <Ionicons name="trash-outline" size={scaleFont(16)} color="#ef4444" />
-            </TouchableOpacity>
+
+            {isDesignador && (
+              <>
+                {item.estadoDesignacion === 3 && (
+                  <TouchableOpacity
+                    style={styles.btnCardReprogramar}
+                    onPress={() => handleReprogramar(item)}
+                  >
+                    <Ionicons
+                      name="refresh-circle-outline"
+                      size={scaleFont(16)}
+                      color="#2563eb"
+                      style={{ marginRight: 4 }}
+                    />
+                    <Text style={styles.btnCardReprogramarText}>Reprogramar</Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  style={styles.btnCardDelete}
+                  onPress={() => handleEliminar(item)}
+                >
+                  <Ionicons
+                    name="trash-outline"
+                    size={scaleFont(16)}
+                    color="#ef4444"
+                  />
+                </TouchableOpacity>
+              </>
+            )}
           </View>
         )}
       </TouchableOpacity>
@@ -188,15 +254,33 @@ export default function DesignacionesListScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text style={styles.title}>Designación</Text>
-        {isDesignador && (
-          <TouchableOpacity
-            style={styles.btnAdd}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.btnAddText}>+ Nueva</Text>
-          </TouchableOpacity>
-        )}
+        <Text style={styles.title}>Designaciones</Text>
+        <View style={styles.topBarActions}>
+          {aceptadasCount > 0 && (
+            <TouchableOpacity
+              style={styles.btnShareAll}
+              onPress={handleShareTodasAceptadas}
+            >
+              <Ionicons
+                name="logo-whatsapp"
+                size={scaleFont(16)}
+                color="#ffffff"
+                style={{ marginRight: 4 }}
+              />
+              <Text style={styles.btnShareAllText}>
+                Aceptadas ({aceptadasCount})
+              </Text>
+            </TouchableOpacity>
+          )}
+          {isDesignador && (
+            <TouchableOpacity
+              style={styles.btnAdd}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={styles.btnAddText}>+ Nueva</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       <FlatList
@@ -310,5 +394,39 @@ const styles = StyleSheet.create({
     borderColor: "#fecaca",
     borderRadius: 6,
     padding: scaleFont(6),
+  },
+  topBarActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: scaleFont(8),
+  },
+  btnShareAll: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#16a34a",
+    paddingVertical: scaleFont(8),
+    paddingHorizontal: scaleFont(12),
+    borderRadius: 8,
+    elevation: 2,
+  },
+  btnShareAllText: {
+    color: "#fff",
+    fontSize: scaleFont(12),
+    fontWeight: "700",
+  },
+  btnCardWhatsapp: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0fdf4",
+    borderWidth: 1,
+    borderColor: "#bbf7d0",
+    borderRadius: 6,
+    paddingVertical: scaleFont(4),
+    paddingHorizontal: scaleFont(8),
+  },
+  btnCardWhatsappText: {
+    fontSize: scaleFont(11),
+    fontWeight: "700",
+    color: "#15803d",
   },
 });
