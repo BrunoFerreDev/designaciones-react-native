@@ -17,7 +17,7 @@ const CAT_COLOR: Record<string, string> = {
 };
 
 export default function CanchasListScreen() {
-  const { arbitro } = useAuth();
+  const { arbitro, canManageCanchas } = useAuth();
   const [canchas, setCanchas] = useState<GetCanchaDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -27,10 +27,7 @@ export default function CanchasListScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingCancha, setEditingCancha] = useState<GetCanchaDTO | null>(null);
 
-  const isSuperuser = arbitro?.roles.includes('SUPERUSER');
-  const isPresidente = arbitro?.roles.includes('PRESIDENTE');
-  const isSecretario = arbitro?.roles.includes('SECRETARIO');
-  const canManage = isSuperuser || isPresidente || isSecretario;
+  const canManage = canManageCanchas;
 
   const loadData = useCallback(async () => {
     try {

@@ -26,6 +26,7 @@ export type TabParamList = {
   Canchas: undefined;
   Arbitros: undefined;
   Suspensiones: undefined;
+  Perfil: undefined;
 };
 
 import { Ionicons } from "@expo/vector-icons";
@@ -36,8 +37,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 function MainTabs() {
+  const { isFullAdmin, isDesignador, isArbitroSolo } = useAuth();
+
   return (
     <Tab.Navigator
+      initialRouteName={isArbitroSolo ? "Designaciones" : "Home"}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: "#1a1a2e",
@@ -68,6 +72,8 @@ function MainTabs() {
             iconName = focused ? "people" : "people-outline";
           } else if (route.name === "Suspensiones") {
             iconName = focused ? "alert-circle" : "alert-circle-outline";
+          } else if (route.name === "Perfil") {
+            iconName = focused ? "person" : "person-outline";
           }
 
           return (
@@ -76,31 +82,55 @@ function MainTabs() {
         },
       })}
     >
-      <Tab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ title: "Inicio" }}
-      />
+      {/* Home para Administrador o Designador */}
+      {!isArbitroSolo && (
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: "Inicio" }}
+        />
+      )}
+
+      {/* Designaciones visible para todos los roles */}
       <Tab.Screen
         name="Designaciones"
         component={DesignacionesListScreen}
         options={{ title: "Designaciones" }}
       />
-      <Tab.Screen
-        name="Canchas"
-        component={CanchasListScreen}
-        options={{ title: "Canchas" }}
-      />
-      <Tab.Screen
-        name="Arbitros"
-        component={ArbitrosListScreen}
-        options={{ title: "Árbitros" }}
-      />
-      <Tab.Screen
-        name="Suspensiones"
-        component={SuspensionesListScreen}
-        options={{ title: "Sanciones" }}
-      />
+
+      {/* Canchas visible para Administrador o Designador */}
+      {(isFullAdmin || isDesignador) && (
+        <Tab.Screen
+          name="Canchas"
+          component={CanchasListScreen}
+          options={{ title: "Canchas" }}
+        />
+      )}
+
+      {/* Árbitros y Sanciones exclusivo para Presidente y Superusuario */}
+      {isFullAdmin && (
+        <>
+          <Tab.Screen
+            name="Arbitros"
+            component={ArbitrosListScreen}
+            options={{ title: "Árbitros" }}
+          />
+          <Tab.Screen
+            name="Suspensiones"
+            component={SuspensionesListScreen}
+            options={{ title: "Sanciones" }}
+          />
+        </>
+      )}
+
+      {/* Perfil en la barra de navegación para Árbitro Solo o Designador */}
+      {!isFullAdmin && (
+        <Tab.Screen
+          name="Perfil"
+          component={PerfilScreen}
+          options={{ title: "Mi Perfil" }}
+        />
+      )}
     </Tab.Navigator>
   );
 }

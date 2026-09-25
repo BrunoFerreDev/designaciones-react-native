@@ -16,17 +16,13 @@ const TIPO_LABEL: Record<number, string> = {
 };
 
 export default function SuspensionesListScreen() {
-  const { arbitro: authArbitro } = useAuth();
+  const { arbitro: authArbitro, canManageSuspensiones } = useAuth();
   const [suspensiones, setSuspensiones] = useState<GetSuspencionDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const isSuperuser = authArbitro?.roles.includes('SUPERUSER');
-  const isPresidente = authArbitro?.roles.includes('PRESIDENTE');
-  const isSecretario = authArbitro?.roles.includes('SECRETARIO');
-  const isDesignador = authArbitro?.roles.includes('DESIGNADOR') || isSuperuser;
-  const canManage = isSuperuser || isPresidente || isSecretario || isDesignador;
+  const canManage = canManageSuspensiones;
 
   const loadData = useCallback(async () => {
     try {

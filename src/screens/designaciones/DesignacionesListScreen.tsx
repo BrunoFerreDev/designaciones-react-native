@@ -39,17 +39,14 @@ const ESTADO_COLOR: Record<number, string> = {
 };
 
 export default function DesignacionesListScreen() {
-  const { arbitro } = useAuth();
+  const { arbitro, canManageDesignaciones } = useAuth();
   const navigation = useNavigation<Nav>();
   const [designaciones, setDesignaciones] = useState<GetDesignacionDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const isSuperuser = arbitro?.roles.includes("SUPERUSER");
-  const isPresidente = arbitro?.roles.includes("PRESIDENTE");
-  const isDesignador =
-    arbitro?.roles.includes("DESIGNADOR") || isSuperuser || isPresidente;
+  const isDesignador = canManageDesignaciones;
 
   const loadData = useCallback(async () => {
     try {

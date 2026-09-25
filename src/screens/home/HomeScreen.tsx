@@ -42,7 +42,15 @@ const ESTADO_COLOR: Record<number, string> = {
 };
 
 export default function HomeScreen() {
-  const { arbitro, logout } = useAuth();
+  const {
+    arbitro,
+    logout,
+    isFullAdmin,
+    isDesignador,
+    canManageDesignaciones,
+    canManageArbitros,
+    canManageSuspensiones,
+  } = useAuth();
   const navigation = useNavigation<Nav>();
 
   const [loading, setLoading] = useState(false);
@@ -64,20 +72,15 @@ export default function HomeScreen() {
   const [modalArbVisible, setModalArbVisible] = useState(false);
   const [modalSuspVisible, setModalSuspVisible] = useState(false);
 
-  const isSuperuser = arbitro?.roles.includes("SUPERUSER");
-  const isPresidente = arbitro?.roles.includes("PRESIDENTE");
-  const isDesignador = arbitro?.roles.includes("DESIGNADOR") || isSuperuser;
-  const isSecretario = arbitro?.roles.includes("SECRETARIO") || isSuperuser;
-  const canCreateArbitro = isSuperuser || isPresidente || isSecretario;
-  const canCreateSuspension =
-    isSuperuser || isPresidente || isSecretario || isDesignador;
+  const canCreateArbitro = canManageArbitros;
+  const canCreateSuspension = canManageSuspensiones;
 
   const loadDashboardData = useCallback(async () => {
     try {
       const [resDes, resArb, resSusp] = await Promise.allSettled([
-        designacionService.getDesignaciones(Boolean(isDesignador)),
-        arbitroService.getArbitros(),
-        suspensionService.getSuspensiones(Boolean(isDesignador)),
+        designacionService.getDesignaciones(Boolean(canManageDesignaciones)),
+        canManageArbitros ? arbitroService.getArbitros() : Promise.resolve([]),
+        canManageSuspensiones ? suspensionService.getSuspensiones(true) : Promise.resolve([]),
       ]);
 
       const designaciones = resDes.status === "fulfilled" ? resDes.value : [];

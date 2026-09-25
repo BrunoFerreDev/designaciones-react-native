@@ -26,7 +26,7 @@ const ESTADO_COLOR: Record<number, string> = {
 export default function DesignacionDetalle() {
   const { params } = useRoute<Route>();
   const navigation = useNavigation();
-  const { arbitro: authArbitro } = useAuth();
+  const { arbitro: authArbitro, canManageDesignaciones } = useAuth();
 
   const [designacion, setDesignacion] = useState<GetDesignacionDTO | null>(null);
   const [designados, setDesignados] = useState<GetDesignadosDTO[]>([]);
@@ -36,9 +36,7 @@ export default function DesignacionDetalle() {
   const [asignarModalVisible, setAsignarModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
 
-  const isSuperuser = authArbitro?.roles.includes('SUPERUSER');
-  const isPresidente = authArbitro?.roles.includes('PRESIDENTE');
-  const isDesignador = authArbitro?.roles.includes('DESIGNADOR') || isSuperuser || isPresidente;
+  const isDesignador = canManageDesignaciones;
 
   const loadData = useCallback(async () => {
     try {

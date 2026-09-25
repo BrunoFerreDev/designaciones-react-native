@@ -17,7 +17,17 @@ import {
 import { AuthUser, LoginRequest, AuthResponse, RolUsuario } from "../types";
 import { ENDPOINTS } from "../constants/api";
 
-interface AuthContextValue {
+export interface AuthPermissions {
+  isFullAdmin: boolean;
+  isDesignador: boolean;
+  isArbitroSolo: boolean;
+  canManageDesignaciones: boolean;
+  canManageCanchas: boolean;
+  canManageArbitros: boolean;
+  canManageSuspensiones: boolean;
+}
+
+interface AuthContextValue extends AuthPermissions {
   arbitro: AuthUser | null;
   token: string | null;
   isLoading: boolean;
@@ -91,8 +101,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setArbitro(null);
   }
 
+  const roles = arbitro?.roles || [];
+  const isSuperuser = roles.includes("SUPERUSER");
+  const isPresidente = roles.includes("PRESIDENTE");
+  const isFullAdmin = isSuperuser || isPresidente;
+  const isDesignador = roles.includes("DESIGNADOR") || isFullAdmin;
+  const isArbitroSolo = !isFullAdmin && !roles.includes("DESIGNADOR");
+
+  const canManageDesignaciones = isDesignador || isFullAdmin;
+  const canManageCanchas = isDesignador || isFullAdmin;
+  const canManageArbitros = isFullAdmin;
+  const canManageSuspensiones = isFullAdmin;
+
   return (
-    <AuthContext.Provider value={{ arbitro, token, isLoading, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        arbitro,
+        token,
+        isLoading,
+        login,
+        logout,
+        isFullAdmin,
+        isDesignador,
+        isArbitroSolo,
+        canManageDesignaciones,
+        canManageCanchas,
+        canManageArbitros,
+        canManageSuspensiones,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

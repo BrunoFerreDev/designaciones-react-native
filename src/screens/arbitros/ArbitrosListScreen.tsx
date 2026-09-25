@@ -13,7 +13,7 @@ import tw from '../../theme/tailwind';
 type TabType = 'activos' | 'todos';
 
 export default function ArbitrosListScreen() {
-  const { arbitro: authArbitro } = useAuth();
+  const { arbitro: authArbitro, canManageArbitros, isDesignador } = useAuth();
   const [arbitros, setArbitros] = useState<GetArbitroDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -24,11 +24,7 @@ export default function ArbitrosListScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingArbitro, setEditingArbitro] = useState<GetArbitroDTO | null>(null);
 
-  const isSuperuser = authArbitro?.roles.includes('SUPERUSER');
-  const isPresidente = authArbitro?.roles.includes('PRESIDENTE');
-  const isSecretario = authArbitro?.roles.includes('SECRETARIO');
-  const isDesignador = authArbitro?.roles.includes('DESIGNADOR') || isSuperuser;
-  const canManage = isSuperuser || isPresidente || isSecretario;
+  const canManage = canManageArbitros;
 
   const loadData = useCallback(async () => {
     try {
