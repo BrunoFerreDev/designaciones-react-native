@@ -1,8 +1,7 @@
 import { Platform } from "react-native";
 
 // URL base obtenida desde variable de entorno EXPO_PUBLIC_API_URL (.env)
-export const BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || "https://circuloarbitros-ja.up.railway.app";
+export const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const ENDPOINTS = {
   // Auth

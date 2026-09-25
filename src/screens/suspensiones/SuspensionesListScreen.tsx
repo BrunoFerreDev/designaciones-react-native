@@ -97,7 +97,7 @@ export default function SuspensionesListScreen() {
               { backgroundColor: esSuspension ? "#e74c3c" : "#f39c12" },
             ]}
           >
-            <Text style={styles.badgeText}>
+            <Text numberOfLines={1} style={styles.badgeText}>
               {TIPO_LABEL[item.tipoSuspencion] || "Sanción"}
             </Text>
           </View>
@@ -262,7 +262,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleFont(8),
     paddingVertical: 3,
   },
-  badgeText: { color: "#fff", fontSize: scaleFont(11), fontWeight: "700" },
+  badgeText: {
+    color: "#fff",
+    fontSize: scaleFont(12),
+    minWidth: scaleFont(120),
+    textAlign: "center",
+    includeFontPadding: false,
+    fontWeight: "700",
+  },
   cancha: { fontSize: scaleFont(12), color: "#475569", marginBottom: 4 },
   motivo: { fontSize: scaleFont(13), color: "#334155", marginBottom: 6 },
   footerRow: {
