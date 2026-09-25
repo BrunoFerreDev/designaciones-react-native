@@ -341,7 +341,7 @@ export default function ArbitrosListScreen() {
               activeTab === "todos" && styles.tabTextActive,
             ]}
           >
-            Todos / Estado ({arbitros.length})
+            Todos({arbitros.length})
           </Text>
         </TouchableOpacity>
       </View>
@@ -458,10 +458,11 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: isSmallDevice ? scaleFont(10.5) : scaleFont(11.5),
     fontWeight: "700",
+    minWidth: scaleFont(70),
     color: "#64748b",
     includeFontPadding: false,
   },
-  tabTextActive: { color: "#fff" },
+  tabTextActive: { color: "#fff", minWidth: scaleFont(70) },
   search: {
     marginHorizontal: scaleFont(16),
     marginVertical: scaleFont(10),

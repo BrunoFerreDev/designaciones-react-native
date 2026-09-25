@@ -532,6 +532,7 @@ export default function HomeScreen() {
                   {canchaNombre}
                 </Text>
                 <View
+                
                   style={[
                     styles.badge,
                     tw`shrink-0`,
@@ -543,8 +544,16 @@ export default function HomeScreen() {
                 >
                   <Text
                     numberOfLines={1}
-                    style={twFont("text-xs font-bold text-white")}
-                  >
+                    style={
+                      {
+                        minWidth: scaleFont(75),
+                        color: "#fff",
+                        fontSize: scaleFont(11),
+                        fontWeight: "700",
+                        textAlign: "center",
+                        includeFontPadding: false,
+                      }
+                    }>
                     {ESTADO_LABEL[item.estadoDesignacion] || "Pendiente"}
                   </Text>
                 </View>
@@ -760,12 +769,11 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: scaleFont(8),
     paddingVertical: 3,
-    minWidth: scaleFont(80),
     alignItems: "center",
-    fontSize: scaleFont(11),
+    fontSize: scaleFont(12),
     justifyContent: "center",
   },
-  badgeText: { color: "#fff", fontSize: scaleFont(11), fontWeight: "700" },
+  badgeText: { color: "#fff", fontSize: scaleFont(12), fontWeight: "700" },
   proximaSub: { fontSize: scaleFont(12), color: "#64748b" },
   emptyCard: {
     backgroundColor: "#fff",

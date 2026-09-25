@@ -47,7 +47,9 @@ export default function DesignacionesListScreen() {
   const { arbitro, canManageDesignaciones } = useAuth();
   const navigation = useNavigation<Nav>();
   const [designaciones, setDesignaciones] = useState<GetDesignacionDTO[]>([]);
-  const [designadosMap, setDesignadosMap] = useState<Record<number, GetDesignadosDTO[]>>({});
+  const [designadosMap, setDesignadosMap] = useState<
+    Record<number, GetDesignadosDTO[]>
+  >({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -122,12 +124,14 @@ export default function DesignacionesListScreen() {
       const designadosResultados = await Promise.all(
         sorted.map(async (d) => {
           try {
-            const list = await designacionService.getDesignados(d.idDesignacion);
+            const list = await designacionService.getDesignados(
+              d.idDesignacion,
+            );
             return [d.idDesignacion, list] as const;
           } catch {
             return [d.idDesignacion, []] as const;
           }
-        })
+        }),
       );
       setDesignadosMap(Object.fromEntries(designadosResultados));
     } catch (e: any) {
@@ -234,7 +238,7 @@ export default function DesignacionesListScreen() {
           >
             <Text
               numberOfLines={1}
-              style={twFont("text-xs font-bold text-white")}
+              style={[twFont("text-xs font-bold text-white"), { minWidth: scaleFont(60) }]}
             >
               {ESTADO_LABEL[item.estadoDesignacion] || "Pendiente"}
             </Text>
@@ -274,15 +278,20 @@ export default function DesignacionesListScreen() {
                   Sin árbitros designados aún
                 </Text>
               ) : (
-                <View style={tw`flex-row flex-wrap gap-1 mt-0.5`}>
+                <View style={tw`gap-2 mt-1`}>
                   {cuadrilla.map((des) => (
                     <View
                       key={des.idDesignados}
-                      style={tw`bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 flex-row items-center mr-1 mb-1`}
+                      style={tw`bg-slate-100 px-2 py-1 rounded-md border border-slate-200`}
                     >
                       <Text
                         numberOfLines={1}
-                        style={twFont("text-[11px] font-semibold text-slate-800")}
+                        style={{
+                          fontSize: scaleFont(11),
+                          color: "#334155",
+                          fontWeight: "600",
+                          flexShrink: 1,
+                        }}
                       >
                         👤 {des.arbitro?.apellido}, {des.arbitro?.nombre}
                       </Text>
@@ -360,9 +369,7 @@ export default function DesignacionesListScreen() {
         <View style={tw`flex-1 min-w-0 mr-2`}>
           <Text
             numberOfLines={1}
-            style={twFont(
-              "text-lg font-black text-slate-900",
-            )}
+            style={twFont("text-lg font-black text-slate-900")}
           >
             Designaciones
           </Text>
