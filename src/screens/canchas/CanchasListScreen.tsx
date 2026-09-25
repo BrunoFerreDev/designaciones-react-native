@@ -163,7 +163,7 @@ export default function CanchasListScreen() {
               setModalVisible(true);
             }}
           >
-            <Text style={styles.btnNewText}>+ Cancha</Text>
+            <Text numberOfLines={1} style={styles.btnNewText}>+ Cancha</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -224,7 +224,14 @@ const styles = StyleSheet.create({
   title: { fontSize: scaleFont(20), fontWeight: 'bold', color: '#0f172a', includeFontPadding: false },
   subtitle: { fontSize: scaleFont(12), color: '#64748b', marginTop: 2, includeFontPadding: false },
   btnNew: {
-    backgroundColor: '#1a1a2e', paddingVertical: scaleFont(8), paddingHorizontal: scaleFont(14), borderRadius: 8,
+    backgroundColor: '#1a1a2e',
+    paddingVertical: scaleFont(8),
+    paddingHorizontal: scaleFont(14),
+    borderRadius: 8,
+    flexShrink: 0,
+    minWidth: scaleFont(74),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   btnNewText: { color: '#fff', fontSize: scaleFont(12), fontWeight: 'bold', includeFontPadding: false },
   searchBox: {

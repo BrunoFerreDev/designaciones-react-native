@@ -183,10 +183,11 @@ export default function DesignacionDetalle() {
         <View
           style={[
             styles.badge,
+            tw`shrink-0 self-start`,
             { backgroundColor: ESTADO_COLOR[designacion.estadoDesignacion] || '#888' },
           ]}
         >
-          <Text style={twFont('text-xs font-bold text-white')}>
+          <Text numberOfLines={1} style={twFont('text-xs font-bold text-white')}>
             {ESTADO_LABEL[designacion.estadoDesignacion] || 'Pendiente'}
           </Text>
         </View>
@@ -215,6 +216,7 @@ export default function DesignacionDetalle() {
         <TouchableOpacity
           style={styles.btnShareWhatsApp}
           onPress={handleShareWhatsApp}
+          activeOpacity={0.8}
         >
           <Ionicons
             name="logo-whatsapp"
@@ -222,7 +224,7 @@ export default function DesignacionDetalle() {
             color="#ffffff"
             style={{ marginRight: 8 }}
           />
-          <Text style={twFont('text-xs font-bold text-white')}>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={twFont('text-sm font-bold text-white')}>
             Compartir por WhatsApp
           </Text>
         </TouchableOpacity>
@@ -233,22 +235,28 @@ export default function DesignacionDetalle() {
         <TouchableOpacity
           style={styles.btnEdit}
           onPress={() => setEditModalVisible(true)}
+          activeOpacity={0.8}
         >
-          <Text style={twFont('text-xs font-bold text-slate-700')}>✏️ Editar Información de la Jornada</Text>
+          <Text numberOfLines={1} adjustsFontSizeToFit style={twFont('text-xs font-bold text-slate-700')}>
+            ✏️ Editar Información de la Jornada
+          </Text>
         </TouchableOpacity>
       )}
 
       {/* Cuadrilla Arbitral */}
       <View style={tw`flex-row justify-between items-center mt-3 mb-2 w-full`}>
-        <Text style={twFont('text-base font-extrabold text-slate-900')}>
+        <Text numberOfLines={1} style={twFont('text-base font-extrabold text-slate-900 flex-1 min-w-0 mr-2')}>
           Cuadrilla Arbitral ({designados.length})
         </Text>
         {isDesignador && (
           <TouchableOpacity
-            style={styles.btnAddArbitro}
+            style={[styles.btnAddArbitro, tw`shrink-0`]}
             onPress={() => setAsignarModalVisible(true)}
+            activeOpacity={0.8}
           >
-            <Text style={twFont('text-xs font-bold text-white')}>+ Asignar Árbitro</Text>
+            <Text numberOfLines={1} style={twFont('text-xs font-bold text-white')}>
+              + Asignar Árbitro
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -290,26 +298,57 @@ export default function DesignacionDetalle() {
       {isDesignador && (
         <View style={styles.estadoSection}>
           <Text style={twFont('text-sm font-bold text-slate-900 mb-2')}>Cambiar Estado de la Jornada</Text>
-          <View style={tw`flex-row flex-wrap gap-1.5 mt-1`}>
-            {[0, 1, 2, 3, 4].map((est) => (
-              <TouchableOpacity
-                key={est}
-                style={[
-                  styles.btnEstado,
-                  designacion.estadoDesignacion === est && styles.btnEstadoActive,
-                ]}
-                onPress={() => cambiarEstado(est)}
-              >
-                <Text
+          <View style={tw`gap-1.5 mt-1 w-full`}>
+            {/* Fila 1: Pendiente, Confirmada, Finalizada */}
+            <View style={tw`flex-row gap-1.5 w-full`}>
+              {[0, 1, 2].map((est) => (
+                <TouchableOpacity
+                  key={est}
                   style={[
-                    styles.btnEstadoText,
-                    designacion.estadoDesignacion === est && styles.btnEstadoTextActive,
+                    styles.btnEstado,
+                    tw`flex-1 items-center justify-center`,
+                    designacion.estadoDesignacion === est && styles.btnEstadoActive,
                   ]}
+                  onPress={() => cambiarEstado(est)}
                 >
-                  {ESTADO_LABEL[est]}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    style={[
+                      styles.btnEstadoText,
+                      designacion.estadoDesignacion === est && styles.btnEstadoTextActive,
+                    ]}
+                  >
+                    {ESTADO_LABEL[est]}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            {/* Fila 2: Cancelada, Suspendida */}
+            <View style={tw`flex-row gap-1.5 w-full`}>
+              {[3, 4].map((est) => (
+                <TouchableOpacity
+                  key={est}
+                  style={[
+                    styles.btnEstado,
+                    tw`flex-1 items-center justify-center`,
+                    designacion.estadoDesignacion === est && styles.btnEstadoActive,
+                  ]}
+                  onPress={() => cambiarEstado(est)}
+                >
+                  <Text
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    style={[
+                      styles.btnEstadoText,
+                      designacion.estadoDesignacion === est && styles.btnEstadoTextActive,
+                    ]}
+                  >
+                    {ESTADO_LABEL[est]}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </View>
       )}
@@ -322,7 +361,7 @@ export default function DesignacionDetalle() {
           activeOpacity={0.8}
         >
           <Ionicons name="refresh-circle-outline" size={scaleFont(22)} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={styles.btnReprogramarText}>Reprogramar Designación</Text>
+          <Text numberOfLines={1} style={styles.btnReprogramarText}>Reprogramar Designación</Text>
         </TouchableOpacity>
       )}
 
@@ -334,7 +373,7 @@ export default function DesignacionDetalle() {
           activeOpacity={0.8}
         >
           <Ionicons name="trash-outline" size={scaleFont(18)} color="#ef4444" style={{ marginRight: 8 }} />
-          <Text style={styles.btnEliminarText}>Eliminar Designación</Text>
+          <Text numberOfLines={1} style={styles.btnEliminarText}>Eliminar Designación</Text>
         </TouchableOpacity>
       )}
 
@@ -368,7 +407,15 @@ const styles = StyleSheet.create({
   },
   cancha: { fontSize: scaleFont(18), fontWeight: 'bold', color: '#0f172a', marginBottom: 4 },
   fecha: { fontSize: scaleFont(12), color: '#64748b' },
-  badge: { borderRadius: 6, paddingHorizontal: scaleFont(8), paddingVertical: 4 },
+  badge: {
+    borderRadius: 6,
+    paddingHorizontal: scaleFont(10),
+    paddingVertical: 4,
+    minWidth: scaleFont(76),
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
   badgeText: { color: '#fff', fontSize: scaleFont(11), fontWeight: '700' },
   infoCard: {
     backgroundColor: '#fff', padding: scaleFont(14), borderRadius: 12,
@@ -377,8 +424,16 @@ const styles = StyleSheet.create({
   infoRow: { fontSize: scaleFont(13), color: '#334155', marginBottom: 6 },
   infoLabel: { fontWeight: '700', color: '#0f172a' },
   btnEdit: {
-    backgroundColor: '#f1f5f9', padding: scaleFont(10), borderRadius: 8,
-    alignItems: 'center', marginBottom: 16, borderWidth: 1, borderColor: '#e2e8f0',
+    backgroundColor: '#f1f5f9',
+    minHeight: scaleFont(42),
+    paddingHorizontal: scaleFont(12),
+    paddingVertical: scaleFont(8),
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
   btnEditText: { color: '#0f172a', fontWeight: '700', fontSize: scaleFont(13) },
   sectionHeaderRow: {
@@ -387,7 +442,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { fontSize: scaleFont(15), fontWeight: '800', color: '#0f172a' },
   btnAddArbitro: {
-    backgroundColor: '#1a1a2e', paddingVertical: scaleFont(6), paddingHorizontal: scaleFont(12), borderRadius: 8,
+    backgroundColor: '#1a1a2e',
+    paddingVertical: scaleFont(7),
+    paddingHorizontal: scaleFont(12),
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   btnAddArbitroText: { color: '#fff', fontSize: scaleFont(11), fontWeight: '700' },
   emptyArbitrosCard: {
@@ -408,23 +468,34 @@ const styles = StyleSheet.create({
   estadoSection: { marginTop: 18 },
   estadoButtonsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 },
   btnEstado: {
-    backgroundColor: '#f1f5f9', paddingVertical: scaleFont(8), paddingHorizontal: scaleFont(12),
-    borderRadius: 8, borderWidth: 1, borderColor: '#cbd5e1',
+    backgroundColor: '#f1f5f9',
+    paddingVertical: scaleFont(8),
+    paddingHorizontal: scaleFont(6),
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    minHeight: scaleFont(36),
   },
   btnEstadoActive: { backgroundColor: '#1a1a2e', borderColor: '#1a1a2e' },
-  btnEstadoText: { fontSize: scaleFont(11), color: '#475569', fontWeight: '600' },
+  btnEstadoText: {
+    fontSize: scaleFont(11),
+    color: '#475569',
+    fontWeight: '600',
+    includeFontPadding: false,
+    textAlign: 'center',
+  },
   btnEstadoTextActive: { color: '#fff', fontWeight: '700' },
   btnReprogramar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: '#2563eb', paddingVertical: scaleFont(12), paddingHorizontal: scaleFont(16),
-    borderRadius: 10, marginTop: 16, elevation: 2,
+    borderRadius: 10, marginTop: 16, elevation: 2, minHeight: scaleFont(44),
   },
   btnReprogramarText: { color: '#fff', fontSize: scaleFont(13), fontWeight: '700' },
   btnEliminar: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: '#fee2e2', borderWidth: 1, borderColor: '#fca5a5',
     paddingVertical: scaleFont(11), paddingHorizontal: scaleFont(16),
-    borderRadius: 10, marginTop: 14,
+    borderRadius: 10, marginTop: 14, minHeight: scaleFont(44),
   },
   btnEliminarText: { color: '#dc2626', fontSize: scaleFont(13), fontWeight: '700' },
   btnShareWhatsApp: {
@@ -437,6 +508,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 14,
     elevation: 2,
+    minHeight: scaleFont(44),
   },
   btnShareWhatsAppText: {
     color: '#ffffff',

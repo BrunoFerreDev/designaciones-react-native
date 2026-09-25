@@ -158,9 +158,12 @@ export default function ArbitrosListScreen() {
         <View style={styles.cardHeader}>
           <View style={{ flex: 1 }}>
             <View style={styles.nameRow}>
-              <Text style={styles.nombre}>
-                {item.apellido + " " + item.nombre}
-              </Text>
+              <Text style={styles.nombre}>{item.apellido} </Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.nombre} numberOfLines={1}>
+                  {item.nombre}
+                </Text>
+              </View>
               {activeTab === "todos" && (
                 <View
                   style={[
@@ -215,7 +218,9 @@ export default function ArbitrosListScreen() {
         {activeTab === "activos" ? (
           <View style={styles.disponibilidad}>
             <View style={styles.dispItem}>
-              <Text style={styles.dispLabel}>Sábado</Text>
+              <Text numberOfLines={1} style={styles.dispLabel}>
+                Sábado
+              </Text>
               <Switch
                 value={item.disponibleSabado}
                 onValueChange={(v) => {
@@ -227,7 +232,9 @@ export default function ArbitrosListScreen() {
               />
             </View>
             <View style={styles.dispItem}>
-              <Text style={styles.dispLabel}>Domingo</Text>
+              <Text numberOfLines={1} style={styles.dispLabel}>
+                Domingo
+              </Text>
               <Switch
                 value={item.disponibleDomingo}
                 onValueChange={(v) => {
@@ -275,21 +282,25 @@ export default function ArbitrosListScreen() {
     <View style={styles.container}>
       {/* Cabecera */}
       <View style={styles.topBar}>
-        <View>
-          <Text style={styles.title}>Árbitros</Text>
-          <Text style={styles.subtitle}>
+        <View style={{ flex: 1, minWidth: 0, marginRight: 8 }}>
+          <Text numberOfLines={1} style={styles.title}>
+            Árbitros
+          </Text>
+          <Text numberOfLines={1} style={styles.subtitle}>
             {arbitrosActivos.length} activos · {arbitros.length} registrados
           </Text>
         </View>
         {canManage && (
           <TouchableOpacity
-            style={styles.btnAdd}
+            style={[styles.btnAdd, { flexShrink: 0 }]}
             onPress={() => {
               setEditingArbitro(null);
               setModalVisible(true);
             }}
           >
-            <Text style={styles.btnAddText}>+ Nuevo</Text>
+            <Text numberOfLines={1} style={styles.btnAddText}>
+              + Nuevo
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -305,6 +316,7 @@ export default function ArbitrosListScreen() {
           activeOpacity={0.8}
         >
           <Text
+            numberOfLines={1}
             style={[
               styles.tabText,
               activeTab === "activos" && styles.tabTextActive,
@@ -323,6 +335,7 @@ export default function ArbitrosListScreen() {
           activeOpacity={0.8}
         >
           <Text
+            numberOfLines={1}
             style={[
               styles.tabText,
               activeTab === "todos" && styles.tabTextActive,
@@ -409,6 +422,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleFont(14),
     borderRadius: 8,
     elevation: 2,
+    flexShrink: 0,
+    minWidth: scaleFont(74),
+    alignItems: "center",
+    justifyContent: "center",
   },
   btnAddText: {
     color: "#fff",
@@ -477,11 +494,18 @@ const styles = StyleSheet.create({
     gap: 6,
     flexWrap: "wrap",
   },
-  nombre: { fontSize: scaleFont(12), fontWeight: "700", color: "#0f172a" },
+  nombre: {
+    fontSize: scaleFont(14),
+    fontWeight: "700",
+    color: "#0f172a",
+    flexShrink: 1,
+    includeFontPadding: false,
+  },
   statusBadge: {
     borderRadius: 4,
     paddingHorizontal: scaleFont(6),
     paddingVertical: 2,
+    flexShrink: 0,
   },
   statusBadgeActive: { backgroundColor: "#dcfce7" },
   statusBadgeInactive: { backgroundColor: "#fee2e2" },
@@ -511,9 +535,21 @@ const styles = StyleSheet.create({
     paddingTop: scaleFont(8),
     borderTopWidth: 1,
     borderTopColor: "#f1f5f9",
+    alignItems: "center",
   },
-  dispItem: { flexDirection: "row", alignItems: "center", gap: 6 },
-  dispLabel: { fontSize: scaleFont(12), color: "#475569", fontWeight: "600" },
+  dispItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    flexShrink: 0,
+  },
+  dispLabel: {
+    fontSize: scaleFont(12),
+    color: "#475569",
+    fontWeight: "600",
+    minWidth: scaleFont(52),
+    includeFontPadding: false,
+  },
   systemToggleRow: {
     flexDirection: "row",
     justifyContent: "space-between",

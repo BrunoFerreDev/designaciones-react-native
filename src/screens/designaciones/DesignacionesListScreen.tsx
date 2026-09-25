@@ -202,37 +202,57 @@ export default function DesignacionesListScreen() {
         }
       >
         <View style={tw`flex-row justify-between items-start w-full mb-1.5`}>
-          <Text numberOfLines={2} style={twFont('text-sm font-bold text-slate-900 flex-1 min-w-0 mr-2')}>
+          <Text
+            numberOfLines={2}
+            style={twFont(
+              "text-sm font-bold text-slate-900 flex-1 min-w-0 mr-2",
+            )}
+          >
             {canchaNombre}
           </Text>
           <View
             style={[
               styles.badge,
+              tw`shrink-0 self-start`,
               {
                 backgroundColor: ESTADO_COLOR[item.estadoDesignacion] || "#888",
               },
             ]}
           >
-            <Text style={twFont('text-xs font-bold text-white')}>
+            <Text
+              numberOfLines={1}
+              style={twFont("text-xs font-bold text-white")}
+            >
               {ESTADO_LABEL[item.estadoDesignacion] || "Pendiente"}
             </Text>
           </View>
         </View>
-        <Text numberOfLines={1} style={twFont('text-xs text-slate-600 font-medium mb-1')}>
+        <Text
+          numberOfLines={1}
+          style={twFont("text-xs text-slate-600 font-medium mb-1")}
+        >
           📅 {fecha} · {item.cantidadPartidos} partido(s)
         </Text>
-        <Text numberOfLines={1} style={twFont('text-xs text-slate-500 font-semibold mb-1')}>
+        <Text
+          numberOfLines={1}
+          style={twFont("text-xs text-slate-500 font-semibold mb-1")}
+        >
           🏆 {item.etapaCampeonato?.replace("_", " ")}
         </Text>
         {item.detalleDesignacion || item.detalleExtra ? (
-          <Text numberOfLines={2} style={twFont('text-xs text-slate-500 italic mt-1')}>
+          <Text
+            numberOfLines={2}
+            style={twFont("text-xs text-slate-500 italic mt-1")}
+          >
             {item.detalleDesignacion || item.detalleExtra}
           </Text>
         ) : null}
 
         {/* Acciones directas en la tarjeta */}
         {(item.estadoDesignacion === 1 || isDesignador) && (
-          <View style={tw`flex-row flex-wrap gap-2 mt-2.5 pt-2.5 border-t border-slate-100 items-center`}>
+          <View
+            style={tw`flex-row flex-wrap gap-2 mt-2.5 pt-2.5 border-t border-slate-100 items-center`}
+          >
             {item.estadoDesignacion === 1 && (
               <TouchableOpacity
                 style={styles.btnCardWhatsapp}
@@ -244,7 +264,9 @@ export default function DesignacionesListScreen() {
                   color="#15803d"
                   style={{ marginRight: 4 }}
                 />
-                <Text style={twFont('text-xs font-bold text-emerald-700')}>WhatsApp</Text>
+                <Text style={twFont("text-xs font-bold text-emerald-700")}>
+                  WhatsApp
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -261,7 +283,7 @@ export default function DesignacionesListScreen() {
                       color="#2563eb"
                       style={{ marginRight: 4 }}
                     />
-                    <Text style={twFont('text-xs font-bold text-blue-600')}>
+                    <Text style={twFont("text-xs font-bold text-blue-600")}>
                       Reprogramar
                     </Text>
                   </TouchableOpacity>
@@ -288,8 +310,13 @@ export default function DesignacionesListScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={tw`flex-row justify-between items-center py-3 px-4 bg-white border-b border-slate-200 w-full`}>
-        <Text numberOfLines={1} style={twFont('text-lg font-black text-slate-900 flex-1 min-w-0 mr-2')}>
+      <View style={styles.topBar}>
+        <Text
+          numberOfLines={1}
+          style={twFont(
+            "text-lg font-black text-slate-900 flex-1 min-w-0 mr-2",
+          )}
+        >
           Designaciones
         </Text>
         <View style={tw`flex-row items-center gap-1.5 flex-shrink-0`}>
@@ -304,17 +331,30 @@ export default function DesignacionesListScreen() {
                 color="#ffffff"
                 style={{ marginRight: 4 }}
               />
-              <Text style={twFont('text-xs font-bold text-white')}>
+              <Text style={twFont("text-xs font-bold text-white")}>
                 Aceptadas ({aceptadasCount})
               </Text>
             </TouchableOpacity>
           )}
           {isDesignador && (
             <TouchableOpacity
-              style={styles.btnAdd}
+              style={[styles.btnAdd, { flexShrink: 0 }]}
               onPress={() => setModalVisible(true)}
+              activeOpacity={0.8}
             >
-              <Text style={twFont('text-xs font-bold text-white')}>+ Nueva</Text>
+              <Text
+                style={{
+                  color: "#fff",
+                  borderRadius: 8,
+                  flexShrink: 0,
+                  minWidth: scaleFont(54),
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                numberOfLines={1}
+              >
+                + Nueva
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -348,7 +388,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: scaleFont(14),
+    paddingHorizontal: scaleFont(16),
     paddingBottom: scaleFont(10),
     paddingTop: scaleFont(44),
     backgroundColor: "#fff",
@@ -364,10 +404,14 @@ const styles = StyleSheet.create({
   },
   btnAdd: {
     backgroundColor: "#1a1a2e",
-    paddingVertical: scaleFont(8),
-    paddingHorizontal: scaleFont(12),
+    paddingVertical: scaleFont(7),
+    paddingHorizontal: scaleFont(10),
     borderRadius: 8,
     elevation: 2,
+    flexShrink: 0,
+    minWidth: scaleFont(74),
+    alignItems: "center",
+    justifyContent: "center",
   },
   btnAddText: {
     color: "#fff",
@@ -400,8 +444,11 @@ const styles = StyleSheet.create({
   },
   badge: {
     borderRadius: 6,
-    paddingHorizontal: scaleFont(8),
+    paddingHorizontal: scaleFont(9),
     paddingVertical: 3,
+    minWidth: scaleFont(74),
+    alignItems: "center",
+    justifyContent: "center",
     flexShrink: 0,
   },
   badgeText: {
@@ -476,15 +523,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#16a34a",
-    paddingVertical: scaleFont(8),
-    paddingHorizontal: scaleFont(12),
+    paddingVertical: scaleFont(7),
+    paddingHorizontal: scaleFont(9),
     borderRadius: 8,
     elevation: 2,
+    flexShrink: 0,
   },
   btnShareAllText: {
     color: "#fff",
-    fontSize: scaleFont(12),
+    fontSize: scaleFont(11),
     fontWeight: "700",
+    includeFontPadding: false,
   },
   btnCardWhatsapp: {
     flexDirection: "row",

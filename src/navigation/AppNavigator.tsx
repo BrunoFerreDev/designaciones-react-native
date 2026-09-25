@@ -46,11 +46,13 @@ function MainTabs() {
         headerShown: false,
         tabBarActiveTintColor: "#1a1a2e",
         tabBarInactiveTintColor: "#94a3b8",
+        tabBarAllowFontScaling: false,
         tabBarLabelStyle: {
-          fontSize: isSmallDevice ? scaleFont(9.5) : scaleFont(10.5),
+          fontSize: isSmallDevice ? scaleFont(8.5) : scaleFont(9.5),
           fontWeight: "700",
           marginBottom: 3,
           includeFontPadding: false,
+          letterSpacing: -0.2,
         },
         tabBarItemStyle: {
           paddingHorizontal: 0,

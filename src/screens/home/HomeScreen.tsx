@@ -81,7 +81,9 @@ export default function HomeScreen() {
       const [resDes, resArb, resSusp] = await Promise.allSettled([
         designacionService.getDesignaciones(Boolean(canManageDesignaciones)),
         canManageArbitros ? arbitroService.getArbitros() : Promise.resolve([]),
-        canManageSuspensiones ? suspensionService.getSuspensiones(true) : Promise.resolve([]),
+        canManageSuspensiones
+          ? suspensionService.getSuspensiones(true)
+          : Promise.resolve([]),
       ]);
 
       const designaciones = resDes.status === "fulfilled" ? resDes.value : [];
@@ -131,39 +133,75 @@ export default function HomeScreen() {
       }
     >
       {/* Header */}
-      <View style={tw`flex-row items-start justify-between mb-5 w-full`}>
+      <View style={tw`flex-row items-start justify-between mb-5 w-full p-2`}>
         <View style={tw`flex-1 min-w-0 mr-3`}>
-          <Text style={twFont('text-xs uppercase font-bold text-slate-500 tracking-wider')}>
+          <Text
+            numberOfLines={1}
+            style={twFont(
+              "text-xs uppercase font-bold text-slate-500 tracking-wide",
+            )}
+          >
             Panel de Control
           </Text>
-          <Text numberOfLines={1} style={twFont('text-xl font-extrabold text-slate-900 mt-0.5')}>
+          <Text
+            numberOfLines={1}
+            style={twFont("text-xl font-extrabold text-slate-900 mt-0.5")}
+          >
             {arbitro?.nombreCompleto || arbitro?.username}
           </Text>
           <View style={tw`flex-row flex-wrap gap-1.5 mt-1.5`}>
             {arbitro?.roles.map((r) => (
               <View key={r} style={styles.roleBadge}>
-                <Text style={twFont('text-xs font-bold text-slate-700')}>{r}</Text>
+                <Text
+                  numberOfLines={1}
+                  style={twFont("text-xs font-bold text-slate-700")}
+                >
+                  {r}
+                </Text>
               </View>
             ))}
           </View>
         </View>
-        <TouchableOpacity style={styles.btnLogout} onPress={logout}>
-          <Text style={twFont('text-xs font-bold text-red-500')}>Salir</Text>
+        <TouchableOpacity
+          style={[
+            styles.btnLogout,
+            tw`shrink-0 min-w-[66px] items-center justify-center`,
+          ]}
+          onPress={logout}
+        >
+          <Text
+            numberOfLines={1}
+            style={{
+              color: "#ef4444",
+              fontSize: scaleFont(12),
+              fontWeight: "700",
+              includeFontPadding: false,
+            }}
+          >
+            Salir
+          </Text>
         </TouchableOpacity>
       </View>
 
       {/* Acciones Rápidas */}
-      <Text style={twFont('text-base font-extrabold text-slate-900 mb-3 mt-2')}>
+      <Text style={twFont("text-base font-extrabold text-slate-900 mb-3 mt-2")}>
         Acciones Rápidas
       </Text>
-      <View style={tw`flex-row flex-wrap gap-2 mb-5 w-full`}>
+      <View style={tw`flex-row gap-2 mb-5 w-full`}>
         {isDesignador && (
           <TouchableOpacity
             style={[styles.actionBtn, { backgroundColor: "#1a1a2e" }]}
             onPress={() => setModalDesVisible(true)}
+            activeOpacity={0.8}
           >
             <Text style={styles.actionIcon}>📋</Text>
-            <Text style={twFont('text-xs font-bold text-white text-center')}>+ Designacion</Text>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={styles.actionLabel}
+            >
+              + Designación
+            </Text>
           </TouchableOpacity>
         )}
 
@@ -171,9 +209,16 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={[styles.actionBtn, { backgroundColor: "#2c3e50" }]}
             onPress={() => setModalArbVisible(true)}
+            activeOpacity={0.8}
           >
             <Text style={styles.actionIcon}>👤</Text>
-            <Text style={twFont('text-xs font-bold text-white text-center')}>+ Árbitro</Text>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={styles.actionLabel}
+            >
+              + Árbitro
+            </Text>
           </TouchableOpacity>
         )}
 
@@ -181,32 +226,57 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={[styles.actionBtn, { backgroundColor: "#c0392b" }]}
             onPress={() => setModalSuspVisible(true)}
+            activeOpacity={0.8}
           >
             <Text style={styles.actionIcon}>⚠️</Text>
-            <Text style={twFont('text-xs font-bold text-white text-center')}>+ Suspensión</Text>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={styles.actionLabel}
+            >
+              + Sanción
+            </Text>
           </TouchableOpacity>
         )}
+      </View>
 
+      {/* Tarjetas KPI */}
+      <View style={tw`flex-row justify-between items-center mb-3 mt-2 w-full`}>
+        <Text style={twFont("text-base font-extrabold text-slate-900")}>
+          Métricas en Vivo
+        </Text>
         <TouchableOpacity
-          style={[styles.actionBtn, { backgroundColor: "#27ae60" }]}
           onPress={onRefresh}
           disabled={refreshing}
+          style={tw`flex-row items-center bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200`}
+          activeOpacity={0.7}
         >
           {refreshing ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator size="small" color="#16a34a" />
           ) : (
             <>
-              <Text style={styles.actionIcon}>🔄</Text>
-              <Text style={twFont('text-xs font-bold text-white text-center')}>Actualizar</Text>
+              <Ionicons
+                name="refresh"
+                size={scaleFont(13)}
+                color="#16a34a"
+                style={{ marginRight: 4 }}
+              />
+              <Text
+                numberOfLines={1}
+                style={{
+                  color: "#16a34a",
+                  fontSize: scaleFont(12),
+                  fontWeight: "700",
+                  minWidth: scaleFont(56),
+                  includeFontPadding: false,
+                }}
+              >
+                Actualizar
+              </Text>
             </>
           )}
         </TouchableOpacity>
       </View>
-
-      {/* Tarjetas KPI */}
-      <Text style={twFont('text-base font-extrabold text-slate-900 mb-3 mt-2')}>
-        Métricas en Vivo
-      </Text>
       {loading ? (
         <ActivityIndicator
           style={{ marginVertical: 30 }}
@@ -214,7 +284,9 @@ export default function HomeScreen() {
           color="#1a1a2e"
         />
       ) : (
-        <View style={tw`flex-row flex-wrap justify-between gap-y-2.5 mb-5 w-full`}>
+        <View
+          style={tw`flex-row flex-wrap justify-between gap-y-2.5 mb-5 w-full`}
+        >
           {/* Tarjeta 1: Designaciones */}
           <TouchableOpacity
             style={styles.kpiCard}
@@ -222,16 +294,42 @@ export default function HomeScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.kpiCardTop}>
-              <View style={[styles.kpiIconWrapper, { backgroundColor: "#eff6ff" }]}>
-                <Ionicons name="calendar" size={scaleFont(15)} color="#2563eb" />
+              <View
+                style={[styles.kpiIconWrapper, { backgroundColor: "#eff6ff" }]}
+              >
+                <Ionicons
+                  name="calendar"
+                  size={scaleFont(15)}
+                  color="#2563eb"
+                />
               </View>
               <View style={[styles.kpiBadge, { backgroundColor: "#dbeafe" }]}>
-                <Text style={twFont('text-[10px] font-bold text-blue-700')}>Jornadas</Text>
+                <Text
+                  numberOfLines={1}
+                  style={twFont("text-[10px] font-bold text-blue-700")}
+                >
+                  Jornadas
+                </Text>
               </View>
             </View>
-            <Text style={twFont('text-xl font-black text-slate-900')}>{totalDes}</Text>
-            <Text style={twFont('text-xs font-bold text-slate-700 mt-0.5')}>Designaciones</Text>
-            <Text numberOfLines={1} style={twFont('text-[10px] font-medium text-slate-500 mt-0.5')}>
+            <Text
+              numberOfLines={1}
+              style={twFont("text-xl font-black text-slate-900")}
+            >
+              {totalDes}
+            </Text>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={twFont("text-xs font-bold text-slate-700 mt-0.5")}
+            >
+              Designaciones
+            </Text>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={twFont("text-[10px] font-medium text-slate-500 mt-0.5")}
+            >
               {confirmadasDes} conf. · {pendientesDes} pend.
             </Text>
           </TouchableOpacity>
@@ -239,45 +337,93 @@ export default function HomeScreen() {
           {/* Tarjeta 2: Árbitros Disponibles */}
           <TouchableOpacity
             style={styles.kpiCard}
-            onPress={() => isFullAdmin && (navigation as any).navigate("Arbitros")}
+            onPress={() =>
+              isFullAdmin && (navigation as any).navigate("Arbitros")
+            }
             activeOpacity={isFullAdmin ? 0.7 : 1}
           >
             <View style={styles.kpiCardTop}>
-              <View style={[styles.kpiIconWrapper, { backgroundColor: "#f0fdf4" }]}>
+              <View
+                style={[styles.kpiIconWrapper, { backgroundColor: "#f0fdf4" }]}
+              >
                 <Ionicons name="people" size={scaleFont(15)} color="#16a34a" />
               </View>
               <View style={[styles.kpiBadge, { backgroundColor: "#dcfce7" }]}>
-                <Text style={twFont('text-[10px] font-bold text-emerald-700')}>Finde</Text>
+                <Text
+                  numberOfLines={1}
+                  style={twFont("text-[10px] font-bold text-emerald-700")}
+                >
+                  Finde
+                </Text>
               </View>
             </View>
-            <Text style={twFont('text-xl font-black text-emerald-600')}>
+            <Text
+              numberOfLines={1}
+              style={twFont("text-xl font-black text-emerald-600")}
+            >
               {dispSabado} / {dispDomingo}
             </Text>
-            <Text style={twFont('text-xs font-bold text-slate-700 mt-0.5')}>Disponibles</Text>
-            <Text numberOfLines={1} style={twFont('text-[10px] font-medium text-slate-500 mt-0.5')}>
-              Sábado / Domingo
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={twFont("text-xs font-bold text-slate-700 mt-0.5")}
+            >
+              Disponibles
+            </Text>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={twFont("text-[10px] font-medium text-slate-500 mt-0.5")}
+            >
+              Sáb {dispSabado} · Dom {dispDomingo}
             </Text>
           </TouchableOpacity>
 
           {/* Tarjeta 3: Sanciones */}
           <TouchableOpacity
             style={styles.kpiCard}
-            onPress={() => isFullAdmin && (navigation as any).navigate("Suspensiones")}
+            onPress={() =>
+              isFullAdmin && (navigation as any).navigate("Suspensiones")
+            }
             activeOpacity={isFullAdmin ? 0.7 : 1}
           >
             <View style={styles.kpiCardTop}>
-              <View style={[styles.kpiIconWrapper, { backgroundColor: "#fef2f2" }]}>
-                <Ionicons name="alert-circle" size={scaleFont(15)} color="#dc2626" />
+              <View
+                style={[styles.kpiIconWrapper, { backgroundColor: "#fef2f2" }]}
+              >
+                <Ionicons
+                  name="alert-circle"
+                  size={scaleFont(15)}
+                  color="#dc2626"
+                />
               </View>
               <View style={[styles.kpiBadge, { backgroundColor: "#fee2e2" }]}>
-                <Text style={twFont('text-[10px] font-bold text-red-700')}>Activas</Text>
+                <Text
+                  numberOfLines={1}
+                  style={twFont("text-[10px] font-bold text-red-700")}
+                >
+                  Activas
+                </Text>
               </View>
             </View>
-            <Text style={twFont('text-xl font-black text-red-600')}>
+            <Text
+              numberOfLines={1}
+              style={twFont("text-xl font-black text-red-600")}
+            >
               {suspensionesActivas}
             </Text>
-            <Text style={twFont('text-xs font-bold text-slate-700 mt-0.5')}>Sanciones</Text>
-            <Text numberOfLines={1} style={twFont('text-[10px] font-medium text-slate-500 mt-0.5')}>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={twFont("text-xs font-bold text-slate-700 mt-0.5")}
+            >
+              Sanciones
+            </Text>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={twFont("text-[10px] font-medium text-slate-500 mt-0.5")}
+            >
               Registros vigentes
             </Text>
           </TouchableOpacity>
@@ -289,20 +435,37 @@ export default function HomeScreen() {
             activeOpacity={0.7}
           >
             <View style={styles.kpiCardTop}>
-              <View style={[styles.kpiIconWrapper, { backgroundColor: "#f1f5f9" }]}>
+              <View
+                style={[styles.kpiIconWrapper, { backgroundColor: "#f1f5f9" }]}
+              >
                 <Ionicons name="person" size={scaleFont(15)} color="#1a1a2e" />
               </View>
               <View style={[styles.kpiBadge, { backgroundColor: "#e2e8f0" }]}>
-                <Text style={twFont('text-[10px] font-bold text-slate-800')}>Cuenta</Text>
+                <Text
+                  numberOfLines={1}
+                  style={twFont("text-[10px] font-bold text-slate-800")}
+                >
+                  Cuenta
+                </Text>
               </View>
             </View>
-            <Text numberOfLines={1} style={twFont('text-xl font-black text-slate-900')}>
+            <Text
+              numberOfLines={1}
+              style={twFont("text-xl font-black text-slate-900")}
+            >
               {arbitro?.nombre || "Mi"}
             </Text>
-            <Text numberOfLines={1} style={twFont('text-xs font-bold text-slate-700 mt-0.5')}>
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              style={twFont("text-xs font-bold text-slate-700 mt-0.5")}
+            >
               {arbitro?.nombreCompleto || "Mi Perfil"}
             </Text>
-            <Text numberOfLines={1} style={twFont('text-[10px] font-semibold text-blue-600 mt-0.5')}>
+            <Text
+              numberOfLines={1}
+              style={twFont("text-[10px] font-semibold text-blue-600 mt-0.5")}
+            >
               Ver detalles →
             </Text>
           </TouchableOpacity>
@@ -311,21 +474,31 @@ export default function HomeScreen() {
 
       {/* Próximas Designaciones */}
       <View style={tw`flex-row justify-between items-center mt-3 mb-2 w-full`}>
-        <Text style={twFont('text-base font-extrabold text-slate-900')}>Últimas Jornadas</Text>
-        <TouchableOpacity onPress={() => (navigation as any).navigate('Designaciones')}>
-          <Text style={twFont('text-xs font-bold text-blue-600')}>Ver todas →</Text>
+        <Text style={twFont("text-base font-extrabold text-slate-900")}>
+          Últimas Jornadas
+        </Text>
+        <TouchableOpacity
+          onPress={() => (navigation as any).navigate("Designaciones")}
+        >
+          <Text style={twFont("text-xs font-bold text-blue-600")}>
+            Ver todas →
+          </Text>
         </TouchableOpacity>
       </View>
 
       {proximas.length === 0 ? (
         <View style={styles.emptyCard}>
-          <Text style={twFont('text-xs text-slate-400 mb-3 text-center')}>No hay designaciones registradas</Text>
+          <Text style={twFont("text-xs text-slate-400 mb-3 text-center")}>
+            No hay designaciones registradas
+          </Text>
           {isDesignador && (
             <TouchableOpacity
               style={styles.btnCrearEmpty}
               onPress={() => setModalDesVisible(true)}
             >
-              <Text style={twFont('text-xs font-bold text-white')}>+ Crear la primera</Text>
+              <Text style={twFont("text-xs font-bold text-white")}>
+                + Crear la primera
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -347,25 +520,39 @@ export default function HomeScreen() {
                 })
               }
             >
-              <View style={tw`flex-row justify-between items-start w-full mb-1`}>
-                <Text numberOfLines={1} style={twFont('text-sm font-bold text-slate-900 flex-1 min-w-0 mr-2')}>
+              <View
+                style={tw`flex-row justify-between items-start w-full mb-1`}
+              >
+                <Text
+                  numberOfLines={1}
+                  style={twFont(
+                    "text-sm font-bold text-slate-900 flex-1 min-w-0 mr-2",
+                  )}
+                >
                   {canchaNombre}
                 </Text>
                 <View
                   style={[
                     styles.badge,
+                    tw`shrink-0`,
                     {
                       backgroundColor:
                         ESTADO_COLOR[item.estadoDesignacion] || "#888",
                     },
                   ]}
                 >
-                  <Text style={twFont('text-xs font-bold text-white')}>
+                  <Text
+                    numberOfLines={1}
+                    style={twFont("text-xs font-bold text-white")}
+                  >
                     {ESTADO_LABEL[item.estadoDesignacion] || "Pendiente"}
                   </Text>
                 </View>
               </View>
-              <Text numberOfLines={1} style={twFont('text-xs text-slate-500 mt-0.5')}>
+              <Text
+                numberOfLines={1}
+                style={twFont("text-xs text-slate-500 mt-0.5")}
+              >
                 📅 {fechaStr} · {item.cantidadPartidos} partido(s)
               </Text>
             </TouchableOpacity>
@@ -434,14 +621,13 @@ const styles = StyleSheet.create({
   roleText: { fontSize: scaleFont(11), fontWeight: "700", color: "#334155" },
   btnLogout: {
     backgroundColor: "#fff",
-    paddingVertical: scaleFont(6),
-    paddingHorizontal: scaleFont(12),
-    borderRadius: 8,
+    paddingVertical: scaleFont(8),
+    borderRadius: 6,
     borderWidth: 1,
     borderColor: "#e2e8f0",
   },
   btnLogoutText: {
-    fontSize: scaleFont(12),
+    fontSize: scaleFont(10),
     color: "#ef4444",
     fontWeight: "700",
   },
@@ -468,9 +654,9 @@ const styles = StyleSheet.create({
   },
   actionBtn: {
     flex: 1,
-    minWidth: isSmallDevice ? 75 : 95,
-    paddingVertical: scaleFont(10),
-    paddingHorizontal: scaleFont(6),
+    minHeight: scaleFont(64),
+    paddingVertical: scaleFont(8),
+    paddingHorizontal: scaleFont(4),
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
@@ -496,7 +682,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderRadius: 14,
     padding: scaleFont(11),
-    minHeight: scaleFont(108),
+    minHeight: scaleFont(114),
     justifyContent: "space-between",
     elevation: 1,
     borderWidth: 1,
@@ -523,6 +709,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: scaleFont(6),
     paddingVertical: 2,
+    flexShrink: 0,
   },
   kpiBadgeText: {
     fontSize: scaleFont(9.5),
@@ -573,6 +760,10 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: scaleFont(8),
     paddingVertical: 3,
+    minWidth: scaleFont(74),
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
   },
   badgeText: { color: "#fff", fontSize: scaleFont(11), fontWeight: "700" },
   proximaSub: { fontSize: scaleFont(12), color: "#64748b" },
