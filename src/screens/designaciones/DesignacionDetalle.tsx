@@ -344,6 +344,7 @@ export default function DesignacionDetalle() {
         onClose={() => setAsignarModalVisible(false)}
         onAssigned={loadData}
         idDesignacion={params.idDesignacion}
+        fechaDesignacion={designacion.fecha}
         assignedArbitroIds={designados.map((d) => d.arbitro?.idArbitro).filter(Boolean) as number[]}
       />
 
