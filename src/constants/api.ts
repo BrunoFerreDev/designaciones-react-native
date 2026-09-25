@@ -1,11 +1,8 @@
 import { Platform } from "react-native";
 
-// Web usa localhost. Android dispositivo físico usa IP LAN o localhost con `adb reverse`
-export const BASE_URL = Platform.select({
-  web: "https://circuloarbitros-ja.up.railway.app",
-  android: "https://circuloarbitros-ja.up.railway.app",
-  default: "https://circuloarbitros-ja.up.railway.app",
-})!;
+// URL base obtenida desde variable de entorno EXPO_PUBLIC_API_URL (.env)
+export const BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || "https://circuloarbitros-ja.up.railway.app";
 
 export const ENDPOINTS = {
   // Auth
