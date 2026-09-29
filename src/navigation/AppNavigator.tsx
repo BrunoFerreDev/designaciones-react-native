@@ -30,6 +30,7 @@ export type TabParamList = {
 };
 
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { scaleFont, isSmallDevice } from "../utils/responsive";
 import tw from "../theme/tailwind";
 
@@ -38,6 +39,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 function MainTabs() {
   const { isFullAdmin, isDesignador, isArbitroSolo } = useAuth();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tab.Navigator
@@ -61,9 +63,9 @@ function MainTabs() {
           backgroundColor: "#ffffff",
           borderTopColor: "#e2e8f0",
           borderTopWidth: 1,
-          height: scaleFont(56),
+          height: scaleFont(56) + insets.bottom,
           paddingTop: 5,
-          paddingBottom: 5,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 5,
         },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap = "help-circle-outline";

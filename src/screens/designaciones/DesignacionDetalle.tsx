@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { RouteProp, useRoute, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   GetDesignacionDTO,
   GetDesignadosDTO,
@@ -49,6 +50,7 @@ export default function DesignacionDetalle() {
   const { params } = useRoute<Route>();
   const navigation = useNavigation();
   const { arbitro: authArbitro, canManageDesignaciones } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const [designacion, setDesignacion] = useState<GetDesignacionDTO | null>(
     null,
@@ -214,7 +216,18 @@ export default function DesignacionDetalle() {
   const canchaNombre = designacion.cancha?.nombreCancha || "Predio s/n";
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={[
+        styles.content,
+        {
+          paddingBottom: Math.max(
+            scaleFont(50),
+            insets.bottom + scaleFont(24),
+          ),
+        },
+      ]}
+    >
       {/* Encabezado */}
       <View
         style={tw`flex-row justify-between items-start bg-white p-4 rounded-2xl border border-slate-200 shadow-sm w-full mb-3`}

@@ -13,6 +13,7 @@ import {
   RefreshControl,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../../context/AuthContext";
 import { arbitroService } from "../../services/arbitroService";
 import { GetArbitroDTO, EstadoCuentaArbitroDTO } from "../../types";
@@ -22,6 +23,7 @@ import tw from "../../theme/tailwind";
 export default function PerfilScreen() {
   const { arbitro: authArbitro, logout } = useAuth();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const [perfil, setPerfil] = useState<GetArbitroDTO | null>(null);
   const [estadoCuenta, setEstadoCuenta] =
@@ -132,7 +134,13 @@ export default function PerfilScreen() {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={[
+        styles.content,
+        {
+          paddingTop: Math.max(scaleFont(16), insets.top + scaleFont(8)),
+          paddingBottom: Math.max(scaleFont(44), insets.bottom + scaleFont(20)),
+        },
+      ]}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }

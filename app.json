@@ -4,15 +4,15 @@
     "slug": "arbitros-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/arbitro.png",
+    "icon": "./assets/app_icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff",
-        "foregroundImage": "./assets/arbitro.png"
+        "backgroundColor": "#123a26",
+        "foregroundImage": "./assets/app_icon.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.arbitros.app",
