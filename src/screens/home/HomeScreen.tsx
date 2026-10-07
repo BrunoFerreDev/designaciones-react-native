@@ -532,7 +532,6 @@ export default function HomeScreen() {
                   {canchaNombre}
                 </Text>
                 <View
-                
                   style={[
                     styles.badge,
                     tw`shrink-0`,
@@ -544,16 +543,15 @@ export default function HomeScreen() {
                 >
                   <Text
                     numberOfLines={1}
-                    style={
-                      {
-                        minWidth: scaleFont(75),
-                        color: "#fff",
-                        fontSize: scaleFont(11),
-                        fontWeight: "700",
-                        textAlign: "center",
-                        includeFontPadding: false,
-                      }
-                    }>
+                    style={{
+                      minWidth: scaleFont(75),
+                      color: "#fff",
+                      fontSize: scaleFont(11),
+                      fontWeight: "700",
+                      textAlign: "center",
+                      includeFontPadding: false,
+                    }}
+                  >
                     {ESTADO_LABEL[item.estadoDesignacion] || "Pendiente"}
                   </Text>
                 </View>
